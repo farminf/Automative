@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Import-Package: org.jivesoftware.smack, org.jivesoftware.smack.tcp, or
+ g.jivesoftware.smack, org.jivesoftware.smack, org.jivesoftware.smack
+
