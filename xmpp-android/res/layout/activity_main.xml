@@ -17,4 +17,13 @@
         android:layout_marginTop="39dp"
         android:text="Connect" />
 
+    <Button
+        android:id="@+id/btnsendmsg"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnconnectToServer"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="26dp"
+        android:text="Send" />
+
 </RelativeLayout>

@@ -2,6 +2,8 @@ package com.xmpp_android.activities;
 
 
 import org.jivesoftware.smack.SmackAndroid;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,7 +18,7 @@ import android.widget.Button;
 
 import com.xmpp_android.R;
 import com.xmpp_android.settings.Connection_Setting;
-import com.xmpp_android.xmpp.xmppConnect;
+import com.xmpp_android.xmpp.ServiceXMPP;
 
 public class MainActivity extends Activity {
 	
@@ -25,35 +27,59 @@ public class MainActivity extends Activity {
 	String password;
 	String serveraddress;
 	int serverport;
-	xmppConnect openFireConnection;
+	ServiceXMPP openFireConnection;
 	Button btnconnectToServer;
+	Button btnSendMessage;
+	String AddressedUser;
+	String domain;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		
+		domain = getString(R.string.domain_name);
+		
 		//Required for using aSmack - also add the DNSjava jar fire in library
 		SmackAndroid.init(MainActivity.this);
-					
+		//Getting User and Server Configuration from Setting shared Preferences			
 		getSharedPreference();
-		
+		Log.d("f", domain);
+		//button connect and it's listener
 		btnconnectToServer = (Button) findViewById(R.id.btnconnectToServer);
 		btnconnectToServer.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				
-				//Getting User and Server Configuration from Setting shared Preferences
+				//AGAIN Getting User and Server Configuration from Setting shared Preferences if users has changed it
 				getSharedPreference();				
 				//Connecting to Openfire Server
 				connectToOpenFireServer();			
 			}
 		});
 		
+		//button Send and it's listener
+		btnSendMessage = (Button) findViewById(R.id.btnsendmsg);
+		btnSendMessage.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				AddressedUser = "android2";
+				try {
+					sendMessage(AddressedUser);
+				} catch (NotConnectedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
-	//Fuction which reads parameters that has set in settings
+	
+
+	//function which reads parameters that has set in settings
 	private void getSharedPreference() {
 		// TODO Auto-generated method stub
 		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -67,11 +93,16 @@ public class MainActivity extends Activity {
 	//function of connecting to XMPP Server
 	private void connectToOpenFireServer() {
 		// TODO Auto-generated method stub
-		openFireConnection = new xmppConnect (serveraddress, username , password);
-		openFireConnection.connect();
-		
-		
+		openFireConnection = new ServiceXMPP (serveraddress, username , password , domain);
+		openFireConnection.connect();		
 	}
+	
+	//function of sending message to addressed user
+	private void sendMessage(String addressedUser2) throws NotConnectedException {
+		// TODO Auto-generated method stub
+		openFireConnection.chat(addressedUser2);
+	}
+	
 	// Menu and Setting functions -----------------------------------------------
 	//---------------------------------------------------------------------------
 	@Override
@@ -92,6 +123,10 @@ public class MainActivity extends Activity {
 			startActivity(intent);
 			return true;
 		case R.id.about:
+			return true;
+		case R.id.exit:
+			finish();
+            System.exit(0);
 			return true;
 		default:
 			break;

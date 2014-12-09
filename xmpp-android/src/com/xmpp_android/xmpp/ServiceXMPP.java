@@ -5,34 +5,40 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.apache.harmony.javax.security.sasl.SaslException;
+import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
+import android.R;
 import android.os.AsyncTask;
 import android.util.Log;
 
 
 
 
-public class xmppConnect{
+public class ServiceXMPP{
 	
 	private String serverAddress;			
 	private String loginUser;		
 	private String passwordUser;	
-	
 	private XMPPConnection connection;
+	private String serverDomain;
 	
-	public xmppConnect(String serverAddress, String loginUser, String passwordUser){
+	public ServiceXMPP(String serverAddress, String loginUser, String passwordUser , String domain){
 		this.serverAddress = serverAddress;
 		this.loginUser = loginUser;
 		this.passwordUser = passwordUser;
+		this.serverDomain = domain;
 	}
 	
 	public String logconnected;
@@ -44,7 +50,7 @@ public class xmppConnect{
 			protected Boolean doInBackground(Void... arg0){
 				boolean isConnected = false;
 
-				ConnectionConfiguration config = new ConnectionConfiguration(serverAddress , 5222 , "farmin.virtus.it");
+				ConnectionConfiguration config = new ConnectionConfiguration(serverAddress , 5222 , serverDomain);
 				config.setReconnectionAllowed(true);
 				config.setSecurityMode(SecurityMode.disabled);
 				
@@ -72,7 +78,28 @@ public class xmppConnect{
 		};		
 		connectionThread.execute();
 	}
+	
+	public void chat(String AddressedUser) throws NotConnectedException {
+		//Create username whom we want to send a message
+		String userToSend = AddressedUser + "@" + serverDomain;
+		
+		ChatManager chatmanager = ChatManager.getInstanceFor(connection);
+		Chat newChat = chatmanager.createChat(userToSend , new MessageListener() {
+			@Override
+			public void processMessage(Chat arg0, Message arg1) {
+				// TODO Auto-generated method stub
+				//System.out.println("Received message: " + message);
 
+			}
+		});
+
+		try {
+			newChat.sendMessage("Hey android2!");
+		}
+		catch (XMPPException e) {
+			System.out.println("Error Delivering block");
+		}
+	}
 	
 	private void login(XMPPConnection connection, final String loginUser, final String passwordUser){
 		try{
