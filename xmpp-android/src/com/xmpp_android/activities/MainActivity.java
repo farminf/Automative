@@ -31,6 +31,7 @@ public class MainActivity extends Activity {
 	Button btnconnectToServer;
 	Button btnSendMessage;
 	Button btnDisconnectFromServer;
+	Button btnAddRoster;
 	String AddressedUser;
 	String domain;
 
@@ -94,11 +95,28 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
+		
+		// button Add Roster and it's listener
+				btnAddRoster = (Button) findViewById(R.id.btnAddRoster);
+				btnAddRoster.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						try {
+							addRosterEntry();
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				});
 	}
 
 	// End Of OnCreate
 	// ********************************************************************
 
+	
 	// function which reads parameters that has set in settings
 	private void getSharedPreference() {
 		// TODO Auto-generated method stub
@@ -139,6 +157,12 @@ public class MainActivity extends Activity {
 		// TODO Auto-generated method stub
 		openFireConnection.chat(addressedUser2);
 	}
+	
+	protected void addRosterEntry() throws Exception {
+		// TODO Auto-generated method stub
+		openFireConnection.createEntry("android2@farmin.virtus.it", "mac");
+	}
+
 
 	// Menu and Setting functions
 	// -----------------------------------------------
