@@ -4,6 +4,7 @@ import org.jivesoftware.smack.SmackAndroid;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -32,8 +33,10 @@ public class MainActivity extends Activity {
 	Button btnSendMessage;
 	Button btnDisconnectFromServer;
 	Button btnAddRoster;
+	Button btnStartService;
 	String AddressedUser;
 	String domain;
+	String SendMessage;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +75,8 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated method stub
 				AddressedUser = "android2";
 				try {
-					sendMessage(AddressedUser);
+					SendMessage = "Hey man";
+					sendMessage(AddressedUser, SendMessage);
 				} catch (NotConnectedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -81,8 +85,8 @@ public class MainActivity extends Activity {
 		});
 
 		// button Disconnect and it's listener
-		btnSendMessage = (Button) findViewById(R.id.btnDisconnectFromServer);
-		btnSendMessage.setOnClickListener(new OnClickListener() {
+		btnDisconnectFromServer = (Button) findViewById(R.id.btnDisconnectFromServer);
+		btnDisconnectFromServer.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -95,28 +99,38 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
-		
-		// button Add Roster and it's listener
-				btnAddRoster = (Button) findViewById(R.id.btnAddRoster);
-				btnAddRoster.setOnClickListener(new OnClickListener() {
 
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						try {
-							addRosterEntry();
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				});
+		// button Add Roster and it's listener
+		btnAddRoster = (Button) findViewById(R.id.btnAddRoster);
+		btnAddRoster.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				try {
+					addRosterEntry();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		btnStartService = (Button) findViewById(R.id.btnStartService);
+		btnStartService.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(getApplicationContext(),ServiceXMPP.class);
+				//intent.setFlags(Service.START_NOT_STICKY);
+				startService(intent);
+			}
+		});
 	}
 
 	// End Of OnCreate
 	// ********************************************************************
 
-	
 	// function which reads parameters that has set in settings
 	private void getSharedPreference() {
 		// TODO Auto-generated method stub
@@ -145,24 +159,25 @@ public class MainActivity extends Activity {
 					.show();
 
 	}
-	//function to Disconnect from openFire
+
+	// function to Disconnect from openFire
 	protected void disconnectFromOpenFireServer() throws NotConnectedException {
 		// TODO Auto-generated method stub
 		openFireConnection.disconnect();
 	}
 
-	// function of sending message to addressed user
-	private void sendMessage(String addressedUser2)
+	// function to send message to addressed user
+	private void sendMessage(String addressedUser2, String sendmsg)
 			throws NotConnectedException {
 		// TODO Auto-generated method stub
-		openFireConnection.chat(addressedUser2);
+		openFireConnection.chat(addressedUser2, sendmsg);
 	}
-	
+
+	// function to add user in roster
 	protected void addRosterEntry() throws Exception {
 		// TODO Auto-generated method stub
 		openFireConnection.createEntry("android2@farmin.virtus.it", "mac");
 	}
-
 
 	// Menu and Setting functions
 	// -----------------------------------------------

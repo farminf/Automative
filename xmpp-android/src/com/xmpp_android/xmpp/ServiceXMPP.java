@@ -25,24 +25,89 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
-import com.xmpp_android.activities.MainActivity;
-
-import android.app.ProgressDialog;
-import android.content.Context;
+import android.app.Service;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Process;
 import android.util.Log;
+import android.widget.Toast;
 
-public class ServiceXMPP {
+public class ServiceXMPP extends Service {
 
+
+	// Handler that receives messages from the thread
+
+	
+
+	private final static String TAG = "ServiceXMPP";
+
+	XMPPConnectionListener connectionListener;
+
+	// Login Parameters
 	private String serverAddress;
 	private String loginUser;
 	private String passwordUser;
+
 	private XMPPConnection connection;
+
+	ChatManager chatmanager;
+
 	private String serverDomain;
+
 	private boolean isConnected = false;
 
-	// private ProgressDialog pdia;
+	// Service Methods
+	// *********************************************************************
+	@Override
+	public void onCreate() {
+		// TODO Auto-generated method stub
+		// super.onCreate();
+		// Start up the thread running the service. Note that we create a
+		// separate thread because the service normally runs in the process's
+		// main thread, which we don't want to block. We also make it
+		// background priority so CPU-intensive work will not disrupt our UI.
+		HandlerThread thread = new HandlerThread("ServiceStartArguments",
+				Process.THREAD_PRIORITY_BACKGROUND);
+		thread.start();
 
+		
+	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		// TODO Auto-generated method stub
+		Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
+
+		// return super.onStartCommand(intent, flags, startId);
+
+		
+		
+
+		// If we get killed, after returning from here, restart
+		return START_NOT_STICKY;
+	}
+
+	@Override
+	public IBinder onBind(Intent intent) {
+		// TODO Auto-generated method stub
+
+		return null;
+	}
+
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		// super.onDestroy();
+		Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
+
+	}
+
+	// *******************************************************************
+	// Defining XMPP Class
 	public ServiceXMPP(String serverAddress, String loginUser,
 			String passwordUser, String domain) {
 		this.serverAddress = serverAddress;
@@ -78,7 +143,7 @@ public class ServiceXMPP {
 
 				connection = new XMPPTCPConnection(config);
 
-				XMPPConnectionListener connectionListener = new XMPPConnectionListener();
+				connectionListener = new XMPPConnectionListener();
 				connection.addConnectionListener(connectionListener);
 				// XMPPConnection.DEBUG_ENABLED = true;
 
@@ -87,11 +152,11 @@ public class ServiceXMPP {
 					isConnected = true;
 
 				} catch (IOException e) {
-					Log.e("error", "IO Exception error");
+					Log.e("error", "IO Exception error : " + e.getMessage());
 				} catch (SmackException e) {
-					Log.e("error", "Smack Exception error");
+					Log.e("error", "Smack Exception error : " + e.getMessage());
 				} catch (XMPPException e) {
-					Log.e("error", "XMPP Exception error");
+					Log.e("error", "XMPP Exception error : " + e.getMessage());
 				}
 				return isConnected;
 
@@ -101,8 +166,7 @@ public class ServiceXMPP {
 			protected void onPostExecute(Boolean result) {
 				// Listener for Chat, if someone sends msg (Start Session by
 				// other user)
-				ChatManager chatmanager = ChatManager
-						.getInstanceFor(connection);
+				chatmanager = ChatManager.getInstanceFor(connection);
 				chatmanager.addChatListener(new ChatManagerListener() {
 					@Override
 					public void chatCreated(Chat chat, boolean createdLocally) {
@@ -217,27 +281,45 @@ public class ServiceXMPP {
 
 		@Override
 		public void connectionClosed() {
+			Log.d(TAG,
+					" [MyConnectionListener] The connection was closed normally.");
 		}
 
 		@Override
-		public void connectionClosedOnError(Exception arg0) {
+		public void connectionClosedOnError(Exception e) {
+			Log.d(TAG,
+					" [MyConnectionListener] The connection was closed due to an exception. Error:"
+							+ e.getMessage());
+
 		}
 
 		@Override
-		public void reconnectingIn(int arg0) {
+		public void reconnectingIn(int sec) {
+			Log.d(TAG,
+					" [MyConnectionListener] The connection will retry to reconnect in "
+							+ sec + " seconds.");
+
 		}
 
 		@Override
-		public void reconnectionFailed(Exception arg0) {
+		public void reconnectionFailed(Exception e) {
+			Log.d(TAG,
+					" [MyConnectionListener] An attempt to connect to the server has failed. Error:"
+							+ e.getMessage());
+
 		}
 
 		@Override
 		public void reconnectionSuccessful() {
+			Log.d(TAG,
+					" [MyConnectionListener] The connection has reconnected successfully to the server.");
+
 		}
 	}
 
 	// Sending message to addressed user
-	public void chat(String AddressedUser) throws NotConnectedException {
+	public void chat(String AddressedUser, String sendmsg)
+			throws NotConnectedException {
 		// Create username whom we want to send a message
 		String userToSend = AddressedUser + "@" + serverDomain;
 
@@ -253,24 +335,30 @@ public class ServiceXMPP {
 				});
 
 		try {
-			newChat.sendMessage("Hey android2!");
+			newChat.sendMessage(sendmsg);
 		} catch (XMPPException e) {
 			System.out.println("Error Delivering block");
 		}
 
 	}
-	
-	//Adding to Roster
+
+	// Adding to Roster
 	public void createEntry(String user, String name) throws Exception {
-		System.out.println(String.format("Creating entry for buddy '%1$s' with name %2$s", user, name));
-        Roster roster = connection.getRoster();
-        roster.createEntry(user, name, null);		
+		System.out.println(String.format(
+				"Creating entry for buddy '%1$s' with name %2$s", user, name));
+		Roster roster = connection.getRoster();
+		roster.createEntry(user, name, null);
 	}
-	
+
 	// Disconnect from server
 	public void disconnect() throws NotConnectedException {
 		if (connection != null && connection.isConnected()) {
+
 			setStatus(false);
+			connection.removeConnectionListener(connectionListener);
+			ChatManager.getInstanceFor(connection).removeChatListener(
+					(ChatManagerListener) chatmanager);
+			connectionListener.connectionClosed();
 			connection.disconnect();
 		}
 	}
