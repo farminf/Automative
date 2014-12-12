@@ -7,50 +7,38 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.xmpp_android.activities.MainActivity" >
-    
-    <Button
-        android:id="@+id/btnsendmsg"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnconnectToServer"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="26dp"
-        android:text="Send" />
 
     <Button
-        android:id="@+id/btnconnectToServer"
-        android:layout_width="wrap_content"
+        android:id="@+id/btnStartService"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/btnsendmsg"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="40dp"
-        android:text="Connect" />
+        android:layout_marginTop="20dp"
+        android:text="Start Service" />
 
     <Button
         android:id="@+id/btnDisconnectFromServer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="39dp"
+        android:text="Disconnect" />
+
+    <Button
+        android:id="@+id/btnsendmsg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btnconnectToServer"
-        android:layout_alignBottom="@+id/btnconnectToServer"
-        android:layout_alignRight="@+id/btnsendmsg"
-        android:text="Disconnect" />
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="Send" />
 
     <Button
         android:id="@+id/btnAddRoster"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/btnsendmsg"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_marginBottom="26dp"
         android:text="Add Roster" />
-
-    <Button
-        android:id="@+id/btnStartService"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="75dp"
-        android:text="Start Service" />
 
 </RelativeLayout>

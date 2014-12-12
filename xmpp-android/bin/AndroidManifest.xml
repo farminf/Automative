@@ -30,7 +30,7 @@
             android:label="@string/app_name" >
         </activity>
         
-        <service android:name="com.xmpp_android.xmpp.ServiceXMPP" />
+        <service android:name="com.xmpp_android.xmpp.XMPPService" />
     </application>
 
 </manifest>

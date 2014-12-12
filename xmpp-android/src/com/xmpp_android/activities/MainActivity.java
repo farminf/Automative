@@ -4,7 +4,6 @@ import org.jivesoftware.smack.SmackAndroid;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 
 import android.app.Activity;
-import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,11 +14,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.xmpp_android.R;
 import com.xmpp_android.settings.Connection_Setting;
-import com.xmpp_android.xmpp.ServiceXMPP;
+import com.xmpp_android.xmpp.XMPP;
+import com.xmpp_android.xmpp.XMPPService;
 
 public class MainActivity extends Activity {
 
@@ -28,7 +27,7 @@ public class MainActivity extends Activity {
 	String password;
 	String serveraddress;
 	int serverport;
-	ServiceXMPP openFireConnection;
+	XMPP openFireConnection;
 	Button btnconnectToServer;
 	Button btnSendMessage;
 	Button btnDisconnectFromServer;
@@ -50,22 +49,7 @@ public class MainActivity extends Activity {
 		// Getting User and Server Configuration from Setting shared Preferences
 		getSharedPreference();
 
-		// button connect and it's listener
-		btnconnectToServer = (Button) findViewById(R.id.btnconnectToServer);
-		btnconnectToServer.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-
-				// AGAIN Getting User and Server Configuration from Setting
-				// shared Preferences if users has changed it
-				getSharedPreference();
-				// Connecting to Openfire Server
-				connectToOpenFireServer();
-
-			}
-		});
-
+		
 		// button Send and it's listener
 		btnSendMessage = (Button) findViewById(R.id.btnsendmsg);
 		btnSendMessage.setOnClickListener(new OnClickListener() {
@@ -76,7 +60,7 @@ public class MainActivity extends Activity {
 				AddressedUser = "android2";
 				try {
 					SendMessage = "Hey man";
-					sendMessage(AddressedUser, SendMessage);
+					XMPPService.sendMessage(AddressedUser, SendMessage);
 				} catch (NotConnectedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -92,7 +76,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				try {
-					disconnectFromOpenFireServer();
+					XMPPService.disconnectFromOpenFireServer();
 				} catch (NotConnectedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -108,7 +92,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				try {
-					addRosterEntry();
+					XMPPService.addRosterEntry();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -121,9 +105,11 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent intent = new Intent(getApplicationContext(),ServiceXMPP.class);
-				//intent.setFlags(Service.START_NOT_STICKY);
-				startService(intent);
+
+				// Start the Service
+				Intent serviceIntent = new Intent(getBaseContext(),
+						XMPPService.class);
+				startService(serviceIntent);
 			}
 		});
 	}
@@ -142,43 +128,7 @@ public class MainActivity extends Activity {
 		Log.d("Settings", username + password + serveraddress + serverport);
 	}
 
-	// function of connecting to XMPP Server
-	private void connectToOpenFireServer() {
-
-		// TODO Auto-generated method stub
-		openFireConnection = new ServiceXMPP(serveraddress, username, password,
-				domain);
-		// openFireConnection.connect();
-		if (openFireConnection.connect())
-
-			Toast.makeText(getApplicationContext(),
-					"you are connected to server", Toast.LENGTH_SHORT).show();
-		else
-			Toast.makeText(getApplicationContext(),
-					"you are NOT connected to server", Toast.LENGTH_SHORT)
-					.show();
-
-	}
-
-	// function to Disconnect from openFire
-	protected void disconnectFromOpenFireServer() throws NotConnectedException {
-		// TODO Auto-generated method stub
-		openFireConnection.disconnect();
-	}
-
-	// function to send message to addressed user
-	private void sendMessage(String addressedUser2, String sendmsg)
-			throws NotConnectedException {
-		// TODO Auto-generated method stub
-		openFireConnection.chat(addressedUser2, sendmsg);
-	}
-
-	// function to add user in roster
-	protected void addRosterEntry() throws Exception {
-		// TODO Auto-generated method stub
-		openFireConnection.createEntry("android2@farmin.virtus.it", "mac");
-	}
-
+	
 	// Menu and Setting functions
 	// -----------------------------------------------
 	// ---------------------------------------------------------------------------

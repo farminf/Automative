@@ -11,12 +11,12 @@ import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPConnection;
@@ -25,23 +25,12 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
-import android.app.Service;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.IBinder;
-import android.os.Looper;
-import android.os.Process;
 import android.util.Log;
-import android.widget.Toast;
 
-public class ServiceXMPP extends Service {
-
+public class XMPP {
 
 	// Handler that receives messages from the thread
-
-	
 
 	private final static String TAG = "ServiceXMPP";
 
@@ -62,54 +51,11 @@ public class ServiceXMPP extends Service {
 
 	// Service Methods
 	// *********************************************************************
-	@Override
-	public void onCreate() {
-		// TODO Auto-generated method stub
-		// super.onCreate();
-		// Start up the thread running the service. Note that we create a
-		// separate thread because the service normally runs in the process's
-		// main thread, which we don't want to block. We also make it
-		// background priority so CPU-intensive work will not disrupt our UI.
-		HandlerThread thread = new HandlerThread("ServiceStartArguments",
-				Process.THREAD_PRIORITY_BACKGROUND);
-		thread.start();
-
-		
-	}
-
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		// TODO Auto-generated method stub
-		Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
-
-		// return super.onStartCommand(intent, flags, startId);
-
-		
-		
-
-		// If we get killed, after returning from here, restart
-		return START_NOT_STICKY;
-	}
-
-	@Override
-	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
-
-		return null;
-	}
-
-	@Override
-	public void onDestroy() {
-		// TODO Auto-generated method stub
-		// super.onDestroy();
-		Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
-
-	}
 
 	// *******************************************************************
 	// Defining XMPP Class
-	public ServiceXMPP(String serverAddress, String loginUser,
-			String passwordUser, String domain) {
+	public XMPP(String serverAddress, String loginUser, String passwordUser,
+			String domain) {
 		this.serverAddress = serverAddress;
 		this.loginUser = loginUser;
 		this.passwordUser = passwordUser;
@@ -355,9 +301,9 @@ public class ServiceXMPP extends Service {
 		if (connection != null && connection.isConnected()) {
 
 			setStatus(false);
-			connection.removeConnectionListener(connectionListener);
-			ChatManager.getInstanceFor(connection).removeChatListener(
-					(ChatManagerListener) chatmanager);
+			// connection.removeConnectionListener(connectionListener);
+			// ChatManager.getInstanceFor(connection).removeChatListener(
+			// (ChatManagerListener) chatmanager);
 			connectionListener.connectionClosed();
 			connection.disconnect();
 		}
