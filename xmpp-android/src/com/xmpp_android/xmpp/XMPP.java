@@ -301,7 +301,7 @@ public class XMPP {
 		if (connection != null && connection.isConnected()) {
 
 			setStatus(false);
-			// connection.removeConnectionListener(connectionListener);
+			connection.removeConnectionListener(connectionListener);
 			// ChatManager.getInstanceFor(connection).removeChatListener(
 			// (ChatManagerListener) chatmanager);
 			connectionListener.connectionClosed();

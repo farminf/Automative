@@ -49,7 +49,6 @@ public class MainActivity extends Activity {
 		// Getting User and Server Configuration from Setting shared Preferences
 		getSharedPreference();
 
-		
 		// button Send and it's listener
 		btnSendMessage = (Button) findViewById(R.id.btnsendmsg);
 		btnSendMessage.setOnClickListener(new OnClickListener() {
@@ -77,6 +76,10 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated method stub
 				try {
 					XMPPService.disconnectFromOpenFireServer();
+					Intent serviceIntent = new Intent(getBaseContext(),
+							XMPPService.class);
+					stopService(serviceIntent);
+					XMPPService.sendForAnHourCancel();
 				} catch (NotConnectedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -128,7 +131,6 @@ public class MainActivity extends Activity {
 		Log.d("Settings", username + password + serveraddress + serverport);
 	}
 
-	
 	// Menu and Setting functions
 	// -----------------------------------------------
 	// ---------------------------------------------------------------------------

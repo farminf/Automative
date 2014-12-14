@@ -1,5 +1,11 @@
 package com.xmpp_android.xmpp;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 
 import com.xmpp_android.R;
@@ -30,6 +36,10 @@ public class XMPPService extends Service {
 	String serveraddress;
 	String domain;
 	int serverport = 5222;
+	// Schedule job parameters
+	private final ScheduledExecutorService scheduler = Executors
+			.newScheduledThreadPool(1);
+	static ScheduledFuture senderHandle;
 
 	// Service Methods
 	// ************************************************************
@@ -57,6 +67,8 @@ public class XMPPService extends Service {
 
 		// Notification
 		createNotificationIcon();
+		// Schedule function call
+		sendForAnHour();
 
 	}
 
@@ -116,7 +128,8 @@ public class XMPPService extends Service {
 	}
 
 	// function to Disconnect from openFire
-	public static void disconnectFromOpenFireServer() throws NotConnectedException {
+	public static void disconnectFromOpenFireServer()
+			throws NotConnectedException {
 		// TODO Auto-generated method stub
 		openFireConnection.disconnect();
 	}
@@ -125,5 +138,31 @@ public class XMPPService extends Service {
 	public static void addRosterEntry() throws Exception {
 		// TODO Auto-generated method stub
 		openFireConnection.createEntry("android2@farmin.virtus.it", "mac");
+	}
+
+	// Function to do something periodically
+	public void sendForAnHour() {
+
+		final Runnable sender = new Runnable() {
+			public void run() {
+				System.out.println("sent");
+				Log.d("F", "sendF");
+			}
+		};
+
+		senderHandle = scheduler.scheduleAtFixedRate(sender, 10, 10, SECONDS);
+
+		scheduler.schedule(new Runnable() {
+			public void run() {
+				senderHandle.cancel(true);
+			}
+		}, 60 * 60, SECONDS);
+	}
+
+	public static void sendForAnHourCancel() {
+
+		senderHandle.cancel(true);
+		System.out.println("schedule job cancelled");
+
 	}
 }
