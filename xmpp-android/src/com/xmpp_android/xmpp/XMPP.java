@@ -63,6 +63,7 @@ public class XMPP {
 
 	// pubsub Parameters
 	PubSubManager pubsubmgr;
+	LeafNode Createdleaf;
 
 	// Service Methods
 	// *********************************************************************
@@ -102,6 +103,7 @@ public class XMPP {
 						serverAddress, 5222, serverDomain);
 				config.setReconnectionAllowed(true);
 				config.setSecurityMode(SecurityMode.disabled);
+				config.setDebuggerEnabled(true);
 
 				connection = new XMPPTCPConnection(config);
 
@@ -352,14 +354,14 @@ public class XMPP {
 
 	// ******************* Publish / Subscribe Functions
 	// ***********************************************
-	public LeafNode createPubSubInstantNode() throws NoResponseException,
-			XMPPErrorException, NotConnectedException {
-		// Create the node
-		LeafNode leaf = pubsubmgr.createNode();
-		return leaf;
-	}
+	// public void createPubSubInstantNode() throws NoResponseException,
+	// XMPPErrorException, NotConnectedException {
+	// // Create the node
+	// LeafNode leaf = pubsubmgr.createNode();
+	// //return leaf;
+	// }
 
-	public Node createPubSubNode() throws NoResponseException,
+	public void createPubSubNode(String nodeName) throws NoResponseException,
 			XMPPErrorException, NotConnectedException {
 		// Create the node
 		ConfigureForm form = new ConfigureForm(FormType.submit);
@@ -368,11 +370,14 @@ public class XMPP {
 		form.setNotifyRetract(true);
 		form.setPersistentItems(true);
 		form.setPublishModel(PublishModel.open);
-		LeafNode leaf = (LeafNode) pubsubmgr.createNode("testNode", form);
-		return leaf;
+		Createdleaf = (LeafNode) pubsubmgr.createNode(nodeName, form);
+		
+		
+		//return leaf;
 	}
 
-	public void publishPubSubNode(String nodeName) throws NoResponseException,
+	@SuppressWarnings("unchecked")
+	public void publishToPubSubNode(String nodeName) throws NoResponseException,
 			XMPPErrorException, NotConnectedException {
 		// Get the node
 		LeafNode node = pubsubmgr.getNode(nodeName);
@@ -389,7 +394,7 @@ public class XMPP {
 
 	}
 
-	public void recievePubSubNode(String nodeName) throws NoResponseException,
+	public void subscribePubSubNode(String nodeName) throws NoResponseException,
 			XMPPErrorException, NotConnectedException {
 
 		// Get the node
@@ -404,7 +409,7 @@ public class XMPP {
 		});
 
 		node.subscribe(connection.getUser());
-		Log.d(TAG, " [pubsub] User " + node
-				+ " subscribed successfully to node " + nodeName);
+		Log.d("subscribe", " [pubsub] User " + connection.getUser()
+				+ " subscribed successfully to node " + node);
 	}
 }

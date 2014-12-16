@@ -41,4 +41,30 @@
         android:layout_marginBottom="26dp"
         android:text="Add Roster" />
 
+    <Button
+        android:id="@+id/btnPub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnCreateNode"
+        android:layout_centerHorizontal="true"
+        android:text="Pub" />
+
+    <Button
+        android:id="@+id/btnCreateNode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnDisconnectFromServer"
+        android:layout_alignLeft="@+id/btnDisconnectFromServer"
+        android:layout_marginBottom="22dp"
+        android:text="Create" />
+
+    <Button
+        android:id="@+id/btnSub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnPub"
+        android:layout_alignBottom="@+id/btnPub"
+        android:layout_alignRight="@+id/btnDisconnectFromServer"
+        android:text="Sub" />
+
 </RelativeLayout>

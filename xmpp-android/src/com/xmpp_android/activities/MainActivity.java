@@ -1,6 +1,8 @@
 package com.xmpp_android.activities;
 
+import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -33,6 +35,9 @@ public class MainActivity extends Activity {
 	Button btnDisconnectFromServer;
 	Button btnAddRoster;
 	Button btnStartService;
+	Button btnCreatePubSubNode;
+	Button btnPublishToNode;
+	Button btnSubscribeToNode;
 	String AddressedUser;
 	String domain;
 	String SendMessage;
@@ -49,6 +54,7 @@ public class MainActivity extends Activity {
 		// Getting User and Server Configuration from Setting shared Preferences
 		getSharedPreference();
 
+		// Button to Start the Service
 		btnStartService = (Button) findViewById(R.id.btnStartService);
 		btnStartService.setOnClickListener(new OnClickListener() {
 
@@ -60,6 +66,19 @@ public class MainActivity extends Activity {
 				Intent serviceIntent = new Intent(getBaseContext(),
 						XMPPService.class);
 				startService(serviceIntent);
+			}
+		});
+
+		// button Disconnect and it's listener
+		btnDisconnectFromServer = (Button) findViewById(R.id.btnDisconnectFromServer);
+		btnDisconnectFromServer.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				Intent serviceIntent = new Intent(getBaseContext(),
+						XMPPService.class);
+				stopService(serviceIntent);
 			}
 		});
 
@@ -77,24 +96,13 @@ public class MainActivity extends Activity {
 				} catch (NotConnectedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					Log.d("Send msg", "cannot Send A msg: " + e.getMessage());
+
 				}
 			}
 		});
 
-		// button Disconnect and it's listener
-		btnDisconnectFromServer = (Button) findViewById(R.id.btnDisconnectFromServer);
-		btnDisconnectFromServer.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				Intent serviceIntent = new Intent(getBaseContext(),
-						XMPPService.class);
-				stopService(serviceIntent);
-			}
-		});
-
-		// button Add Roster and it's listener
+		// button to add roster and it's listener
 		btnAddRoster = (Button) findViewById(R.id.btnAddRoster);
 		btnAddRoster.setOnClickListener(new OnClickListener() {
 
@@ -104,10 +112,69 @@ public class MainActivity extends Activity {
 				try {
 					rosterUsernameToAdd = "android2";
 					rosterNickNameToAdd = "mac";
-					XMPPService.addRosterEntry(rosterUsernameToAdd , rosterNickNameToAdd);
+					XMPPService.addRosterEntry(rosterUsernameToAdd,
+							rosterNickNameToAdd);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					Log.d("Add Roster", "cannot Add roster: " + e.getMessage());
+
+				}
+			}
+		});
+
+		// button to Create A Pub/Sub Node
+		btnCreatePubSubNode = (Button) findViewById(R.id.btnCreateNode);
+		btnCreatePubSubNode.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				String nodeNameToCreate = "testnode-1";
+
+				try {
+
+					XMPPService.createPubSubNode(nodeNameToCreate);
+
+				} catch (NoResponseException | XMPPErrorException
+						| NotConnectedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					Log.d("CreateNode",
+							"cannot Create A node: " + e.getMessage());
+
+				}
+			}
+		});
+		// button to publish to the node
+		btnPublishToNode = (Button) findViewById(R.id.btnPub);
+		btnPublishToNode.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		// button to subscribe to the node
+		btnSubscribeToNode = (Button) findViewById(R.id.btnSub);
+		btnSubscribeToNode.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				String nodeNameToSubscribe = "testnode-1";
+				try {
+
+					XMPPService.subscribeToNode(nodeNameToSubscribe);
+
+				} catch (NoResponseException | XMPPErrorException
+						| NotConnectedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					Log.d("Subscribe Node", "cannot subscribe to the node: "
+							+ e.getMessage());
 				}
 			}
 		});

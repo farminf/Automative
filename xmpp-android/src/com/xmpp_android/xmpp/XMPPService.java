@@ -7,7 +7,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
 import org.jivesoftware.smack.SmackAndroid;
+import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 
 import com.xmpp_android.R;
 import com.xmpp_android.activities.MainActivity;
@@ -174,7 +176,8 @@ public class XMPPService extends Service {
 	}
 
 	// function to add user in roster
-	public static void addRosterEntry(String rosterNameToAdd , String rosterNickNameToAdd) throws Exception {
+	public static void addRosterEntry(String rosterNameToAdd,
+			String rosterNickNameToAdd) throws Exception {
 		// TODO Auto-generated method stub
 		openFireConnection.createEntry(rosterNameToAdd, rosterNickNameToAdd);
 
@@ -205,5 +208,21 @@ public class XMPPService extends Service {
 		senderHandle.cancel(true);
 		System.out.println("schedule job cancelled");
 
+	}
+
+	// function to create a pub/sub node
+	public static void createPubSubNode(String nodeName)
+			throws NoResponseException, XMPPErrorException,
+			NotConnectedException {
+
+		openFireConnection.createPubSubNode(nodeName);
+	}
+
+	// function to subscribe to a node
+	public static void subscribeToNode(String nodeName)
+			throws NoResponseException, XMPPErrorException,
+			NotConnectedException {
+
+		openFireConnection.subscribePubSubNode(nodeName);
 	}
 }
