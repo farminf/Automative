@@ -1,6 +1,5 @@
 package com.xmpp_android.activities;
 
-import org.jivesoftware.smack.SmackAndroid;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 
 import android.app.Activity;
@@ -16,6 +15,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import com.xmpp_android.R;
+import com.xmpp_android.settings.About;
 import com.xmpp_android.settings.Connection_Setting;
 import com.xmpp_android.xmpp.XMPP;
 import com.xmpp_android.xmpp.XMPPService;
@@ -36,6 +36,8 @@ public class MainActivity extends Activity {
 	String AddressedUser;
 	String domain;
 	String SendMessage;
+	String rosterUsernameToAdd;
+	String rosterNickNameToAdd;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +46,22 @@ public class MainActivity extends Activity {
 
 		domain = getString(R.string.domain_name);
 
-		// Required for using aSmack - also add the DNSjava jar fire in library
-		SmackAndroid.init(MainActivity.this);
 		// Getting User and Server Configuration from Setting shared Preferences
 		getSharedPreference();
+
+		btnStartService = (Button) findViewById(R.id.btnStartService);
+		btnStartService.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+
+				// Start the Service
+				Intent serviceIntent = new Intent(getBaseContext(),
+						XMPPService.class);
+				startService(serviceIntent);
+			}
+		});
 
 		// button Send and it's listener
 		btnSendMessage = (Button) findViewById(R.id.btnsendmsg);
@@ -73,17 +87,10 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				try {
-					XMPPService.disconnectFromOpenFireServer();
-					Intent serviceIntent = new Intent(getBaseContext(),
-							XMPPService.class);
-					stopService(serviceIntent);
-					XMPPService.sendForAnHourCancel();
-				} catch (NotConnectedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+
+				Intent serviceIntent = new Intent(getBaseContext(),
+						XMPPService.class);
+				stopService(serviceIntent);
 			}
 		});
 
@@ -95,26 +102,16 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				try {
-					XMPPService.addRosterEntry();
+					rosterUsernameToAdd = "android2";
+					rosterNickNameToAdd = "mac";
+					XMPPService.addRosterEntry(rosterUsernameToAdd , rosterNickNameToAdd);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		});
-		btnStartService = (Button) findViewById(R.id.btnStartService);
-		btnStartService.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-
-				// Start the Service
-				Intent serviceIntent = new Intent(getBaseContext(),
-						XMPPService.class);
-				startService(serviceIntent);
-			}
-		});
 	}
 
 	// End Of OnCreate
@@ -128,7 +125,8 @@ public class MainActivity extends Activity {
 		password = sharedPref.getString("textPassword", "");
 		serveraddress = sharedPref.getString("textServerAddress", "");
 		serverport = 5222;
-		Log.d("Settings", username + password + serveraddress + serverport);
+		Log.d("Settings", username + "," + password + "," + serveraddress + ":"
+				+ serverport);
 	}
 
 	// Menu and Setting functions
@@ -148,10 +146,13 @@ public class MainActivity extends Activity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		switch (item.getItemId()) {
 		case R.id.action_settings:
-			Intent intent = new Intent(this, Connection_Setting.class);
-			startActivity(intent);
+			Intent ConnectionSettingIntent = new Intent(this,
+					Connection_Setting.class);
+			startActivity(ConnectionSettingIntent);
 			return true;
 		case R.id.about:
+			Intent aboutIntent = new Intent(this, About.class);
+			startActivity(aboutIntent);
 			return true;
 		case R.id.exit:
 			finish();

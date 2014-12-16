@@ -18,19 +18,31 @@ import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.jivesoftware.smackx.pubsub.AccessModel;
+import org.jivesoftware.smackx.pubsub.ConfigureForm;
+import org.jivesoftware.smackx.pubsub.FormType;
+import org.jivesoftware.smackx.pubsub.Item;
+import org.jivesoftware.smackx.pubsub.ItemPublishEvent;
+import org.jivesoftware.smackx.pubsub.LeafNode;
+import org.jivesoftware.smackx.pubsub.Node;
+import org.jivesoftware.smackx.pubsub.PayloadItem;
+import org.jivesoftware.smackx.pubsub.PubSubManager;
+import org.jivesoftware.smackx.pubsub.PublishModel;
+import org.jivesoftware.smackx.pubsub.SimplePayload;
+import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
 public class XMPP {
-
-	// Handler that receives messages from the thread
 
 	private final static String TAG = "ServiceXMPP";
 
@@ -48,6 +60,9 @@ public class XMPP {
 	private String serverDomain;
 
 	private boolean isConnected = false;
+
+	// pubsub Parameters
+	PubSubManager pubsubmgr;
 
 	// Service Methods
 	// *********************************************************************
@@ -81,6 +96,7 @@ public class XMPP {
 
 			@Override
 			protected Boolean doInBackground(Void... arg0) {
+
 				isConnected = false;
 				ConnectionConfiguration config = new ConnectionConfiguration(
 						serverAddress, 5222, serverDomain);
@@ -110,6 +126,10 @@ public class XMPP {
 
 			@Override
 			protected void onPostExecute(Boolean result) {
+				// print username
+				String connectedusername = connection.getUser();
+				Log.d("Connected Username", connectedusername);
+
 				// Listener for Chat, if someone sends msg (Start Session by
 				// other user)
 				chatmanager = ChatManager.getInstanceFor(connection);
@@ -158,6 +178,16 @@ public class XMPP {
 					}
 				});
 
+				// PubSub Node Methods
+				// Create a pubsub manager using an existing XMPPConnection
+				pubsubmgr = new PubSubManager(connection);
+
+			}
+
+			@Override
+			protected void onCancelled() {
+				// TODO Auto-generated method stub
+				super.onCancelled();
 			}
 
 		};
@@ -289,24 +319,92 @@ public class XMPP {
 	}
 
 	// Adding to Roster
-	public void createEntry(String user, String name) throws Exception {
+	public void createEntry(String user, String nickname) throws Exception {
+		String rosterUsernameToAdd = user + "@" + serverDomain;
 		System.out.println(String.format(
-				"Creating entry for buddy '%1$s' with name %2$s", user, name));
+				"Creating entry for buddy '%1$s' with name %2$s",
+				rosterUsernameToAdd, nickname));
 		Roster roster = connection.getRoster();
-		roster.createEntry(user, name, null);
+		roster.createEntry(rosterUsernameToAdd, nickname, null);
 	}
 
 	// Disconnect from server
-	public void disconnect() throws NotConnectedException {
+	public void disconnect() {
 		if (connection != null && connection.isConnected()) {
 
-			setStatus(false);
+			// connectionListener.connectionClosed();
 			connection.removeConnectionListener(connectionListener);
-			// ChatManager.getInstanceFor(connection).removeChatListener(
-			// (ChatManagerListener) chatmanager);
-			connectionListener.connectionClosed();
-			connection.disconnect();
+			Presence unavailablePresence = new Presence(
+					Presence.Type.unavailable);
+			try {
+				connection.disconnect(unavailablePresence);
+			} catch (NotConnectedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Log.d("Disconnect", "cannot disconnet: " + e.getMessage());
+			}
+
+		} else {
+			Log.d("Error-f",
+					"You are not connected to server so how you want to disconnect it?!");
 		}
 	}
 
+	// ******************* Publish / Subscribe Functions
+	// ***********************************************
+	public LeafNode createPubSubInstantNode() throws NoResponseException,
+			XMPPErrorException, NotConnectedException {
+		// Create the node
+		LeafNode leaf = pubsubmgr.createNode();
+		return leaf;
+	}
+
+	public Node createPubSubNode() throws NoResponseException,
+			XMPPErrorException, NotConnectedException {
+		// Create the node
+		ConfigureForm form = new ConfigureForm(FormType.submit);
+		form.setAccessModel(AccessModel.open);
+		form.setDeliverPayloads(false);
+		form.setNotifyRetract(true);
+		form.setPersistentItems(true);
+		form.setPublishModel(PublishModel.open);
+		LeafNode leaf = (LeafNode) pubsubmgr.createNode("testNode", form);
+		return leaf;
+	}
+
+	public void publishPubSubNode(String nodeName) throws NoResponseException,
+			XMPPErrorException, NotConnectedException {
+		// Get the node
+		LeafNode node = pubsubmgr.getNode(nodeName);
+
+		// Publish an Item, let service set the id
+		//node.send(new Item());
+
+		// Publish an Item with the specified id
+		// node.send(new Item("123abc"));
+
+		// Publish an Item with payload
+		node.send(new PayloadItem("test" + System.currentTimeMillis(),
+				new SimplePayload("book", "pubsub:test:book", "Two Towers")));
+
+	}
+
+	public void recievePubSubNode(String nodeName) throws NoResponseException,
+			XMPPErrorException, NotConnectedException {
+
+		// Get the node
+		LeafNode node = pubsubmgr.getNode(nodeName);
+		node.addItemEventListener(new ItemEventListener<Item>() {
+
+			@Override
+			public void handlePublishedItems(ItemPublishEvent<Item> items) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		node.subscribe(connection.getUser());
+		Log.d(TAG, " [pubsub] User " + node
+				+ " subscribed successfully to node " + nodeName);
+	}
 }
