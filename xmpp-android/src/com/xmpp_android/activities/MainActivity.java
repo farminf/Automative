@@ -1,7 +1,9 @@
 package com.xmpp_android.activities;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 
 import android.app.Activity;
@@ -38,6 +40,7 @@ public class MainActivity extends Activity {
 	Button btnCreatePubSubNode;
 	Button btnPublishToNode;
 	Button btnSubscribeToNode;
+	Button btnSendAdhoc;
 	String AddressedUser;
 	String domain;
 	String SendMessage;
@@ -154,6 +157,18 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 
+				String nodeNameToPublish = "testnode-1";
+				try {
+
+					XMPPService.publishToNode(nodeNameToPublish);
+
+				} catch (NoResponseException | XMPPErrorException
+						| NotConnectedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					Log.d("Publish Node",
+							"cannot publish to the node: " + e.getMessage());
+				}
 			}
 		});
 
@@ -176,6 +191,25 @@ public class MainActivity extends Activity {
 					Log.d("Subscribe Node", "cannot subscribe to the node: "
 							+ e.getMessage());
 				}
+			}
+		});
+
+		// button to send Ad-Hoc Command
+		btnSendAdhoc = (Button) findViewById(R.id.btnSendAdhoc);
+		btnSendAdhoc.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+
+				try {
+					XMPPService.sendAdhocCommand();
+					
+				} catch (XMPPException | SmackException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
 			}
 		});
 

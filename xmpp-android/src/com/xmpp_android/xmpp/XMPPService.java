@@ -7,8 +7,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
 import org.jivesoftware.smack.SmackAndroid;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 
 import com.xmpp_android.R;
@@ -224,5 +226,19 @@ public class XMPPService extends Service {
 			NotConnectedException {
 
 		openFireConnection.subscribePubSubNode(nodeName);
+	}
+
+	// function to publish to the node
+	public static void publishToNode(String nodeName)
+			throws NoResponseException, XMPPErrorException,
+			NotConnectedException {
+
+		openFireConnection.publishToPubSubNode(nodeName);
+	}
+
+	// Function to send AdHoc Command
+	public static void sendAdhocCommand() throws XMPPException, SmackException {
+
+		openFireConnection.sendAdHocCommands();
 	}
 }

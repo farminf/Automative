@@ -16,15 +16,6 @@
         android:text="Start Service" />
 
     <Button
-        android:id="@+id/btnDisconnectFromServer"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="39dp"
-        android:text="Disconnect" />
-
-    <Button
         android:id="@+id/btnsendmsg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -50,15 +41,6 @@
         android:text="Pub" />
 
     <Button
-        android:id="@+id/btnCreateNode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btnDisconnectFromServer"
-        android:layout_alignLeft="@+id/btnDisconnectFromServer"
-        android:layout_marginBottom="22dp"
-        android:text="Create" />
-
-    <Button
         android:id="@+id/btnSub"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -66,5 +48,30 @@
         android:layout_alignBottom="@+id/btnPub"
         android:layout_alignRight="@+id/btnDisconnectFromServer"
         android:text="Sub" />
+
+    <Button
+        android:id="@+id/btnDisconnectFromServer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnStartService"
+        android:layout_alignParentBottom="true"
+        android:text="Disconnect" />
+
+    <Button
+        android:id="@+id/btnCreateNode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnDisconnectFromServer"
+        android:layout_below="@+id/btnsendmsg"
+        android:layout_marginTop="22dp"
+        android:text="Create" />
+
+    <Button
+        android:id="@+id/btnSendAdhoc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnDisconnectFromServer"
+        android:layout_centerHorizontal="true"
+        android:text="Send Ad-hoc" />
 
 </RelativeLayout>

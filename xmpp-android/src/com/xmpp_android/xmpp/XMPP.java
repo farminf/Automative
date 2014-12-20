@@ -26,18 +26,25 @@ import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.jivesoftware.smackx.commands.AdHocCommandManager;
+import org.jivesoftware.smackx.commands.RemoteCommand;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
+import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.smackx.pubsub.AccessModel;
 import org.jivesoftware.smackx.pubsub.ConfigureForm;
 import org.jivesoftware.smackx.pubsub.FormType;
 import org.jivesoftware.smackx.pubsub.Item;
 import org.jivesoftware.smackx.pubsub.ItemPublishEvent;
 import org.jivesoftware.smackx.pubsub.LeafNode;
-import org.jivesoftware.smackx.pubsub.Node;
 import org.jivesoftware.smackx.pubsub.PayloadItem;
 import org.jivesoftware.smackx.pubsub.PubSubManager;
 import org.jivesoftware.smackx.pubsub.PublishModel;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
+
+import com.xmpp_android.adhoc.Custom_Command;
+import com.xmpp_android.adhoc.Custom_Command_Send;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -64,6 +71,9 @@ public class XMPP {
 	// pubsub Parameters
 	PubSubManager pubsubmgr;
 	LeafNode Createdleaf;
+
+	// ad-hoc parameter
+	int timeout = 5000;
 
 	// Service Methods
 	// *********************************************************************
@@ -183,6 +193,9 @@ public class XMPP {
 				// PubSub Node Methods
 				// Create a pubsub manager using an existing XMPPConnection
 				pubsubmgr = new PubSubManager(connection);
+
+				// Register Ad-hoc commands
+				receiveAdHocCommands();
 
 			}
 
@@ -339,6 +352,7 @@ public class XMPP {
 			Presence unavailablePresence = new Presence(
 					Presence.Type.unavailable);
 			try {
+				// Thread.sleep(5000);
 				connection.disconnect(unavailablePresence);
 			} catch (NotConnectedException e) {
 				// TODO Auto-generated catch block
@@ -371,19 +385,19 @@ public class XMPP {
 		form.setPersistentItems(true);
 		form.setPublishModel(PublishModel.open);
 		Createdleaf = (LeafNode) pubsubmgr.createNode(nodeName, form);
-		
-		
-		//return leaf;
+
+		// return leaf;
 	}
 
 	@SuppressWarnings("unchecked")
-	public void publishToPubSubNode(String nodeName) throws NoResponseException,
-			XMPPErrorException, NotConnectedException {
+	public void publishToPubSubNode(String nodeName)
+			throws NoResponseException, XMPPErrorException,
+			NotConnectedException {
 		// Get the node
 		LeafNode node = pubsubmgr.getNode(nodeName);
 
 		// Publish an Item, let service set the id
-		//node.send(new Item());
+		// node.send(new Item());
 
 		// Publish an Item with the specified id
 		// node.send(new Item("123abc"));
@@ -394,8 +408,9 @@ public class XMPP {
 
 	}
 
-	public void subscribePubSubNode(String nodeName) throws NoResponseException,
-			XMPPErrorException, NotConnectedException {
+	public void subscribePubSubNode(String nodeName)
+			throws NoResponseException, XMPPErrorException,
+			NotConnectedException {
 
 		// Get the node
 		LeafNode node = pubsubmgr.getNode(nodeName);
@@ -411,5 +426,72 @@ public class XMPP {
 		node.subscribe(connection.getUser());
 		Log.d("subscribe", " [pubsub] User " + connection.getUser()
 				+ " subscribed successfully to node " + node);
+	}
+
+	// *********************************************
+	// *********** Ad-Hoc Commands Functions********
+	// one for receiving , one for sending
+	// **********************************************
+
+	private void receiveAdHocCommands() {
+		AdHocCommandManager commandManager = AdHocCommandManager
+				.getAddHocCommandsManager(connection);
+//		commandManager.registerCommand("first_custom_command",
+//				"First Custom Command", Custom_Command.class);
+		commandManager.registerCommand("send_msg_command",
+		"Send Message Command", Custom_Command_Send.class);
+	}
+
+	// Send AdHoc command Function
+	public void sendAdHocCommands() throws XMPPException, SmackException {
+		DiscoverInfo discoInfo = null;
+		ServiceDiscoveryManager disco = ServiceDiscoveryManager
+				.getInstanceFor(connection);
+		try {
+			discoInfo = disco.discoverInfo("receiver1@farmin.virtus.it/Smack");
+		} catch (XMPPException e1) {
+			e1.printStackTrace();
+		} catch (NoResponseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotConnectedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// Search the receiver commands and send one of them
+
+		AdHocCommandManager commandManager = AdHocCommandManager
+				.getAddHocCommandsManager(connection);
+		DiscoverItems cmds = null;
+		// Retrieves all the commands provided by the receiver
+		cmds = commandManager
+				.discoverCommands("receiver1@farmin.virtus.it/Smack");
+		String commandName = null;
+
+		// Verify the present command
+		for (org.jivesoftware.smackx.disco.packet.DiscoverItems.Item item : cmds
+				.getItems()) {
+			if (item.getNode().compareTo("first_custom_command") == 0) {
+				commandName = item.getNode();
+			}
+		}
+		RemoteCommand remoteCommand = null;
+
+		// Retrieve the command to be executed
+		if (commandName != null) {
+			remoteCommand = commandManager.getRemoteCommand(
+					"receiver1@farmin.virtus.it/Smack", commandName);
+		}
+		remoteCommand.execute();
+		System.out.println("Command executed. Wait " + timeout / 1000
+				+ " seconds...\n");
+		try {
+			Thread.sleep(timeout);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }
