@@ -113,8 +113,8 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				try {
-					rosterUsernameToAdd = "android2";
-					rosterNickNameToAdd = "mac";
+					rosterUsernameToAdd = "sender1";
+					rosterNickNameToAdd = "adhoc sender";
 					XMPPService.addRosterEntry(rosterUsernameToAdd,
 							rosterNickNameToAdd);
 				} catch (Exception e) {

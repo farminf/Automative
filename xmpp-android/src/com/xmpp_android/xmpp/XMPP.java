@@ -27,6 +27,8 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.commands.AdHocCommandManager;
+import org.jivesoftware.smackx.commands.LocalCommand;
+import org.jivesoftware.smackx.commands.LocalCommandFactory;
 import org.jivesoftware.smackx.commands.RemoteCommand;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
@@ -42,6 +44,7 @@ import org.jivesoftware.smackx.pubsub.PubSubManager;
 import org.jivesoftware.smackx.pubsub.PublishModel;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
+import org.jivesoftware.smackx.xdata.Form;
 
 import com.xmpp_android.adhoc.Custom_Command;
 import com.xmpp_android.adhoc.Custom_Command_Send;
@@ -195,7 +198,13 @@ public class XMPP {
 				pubsubmgr = new PubSubManager(connection);
 
 				// Register Ad-hoc commands
-				receiveAdHocCommands();
+				try {
+					// Process root = Runtime.getRuntime().exec("su");
+					receiveAdHocCommands();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
 			}
 
@@ -433,13 +442,89 @@ public class XMPP {
 	// one for receiving , one for sending
 	// **********************************************
 
-	private void receiveAdHocCommands() {
+	private void receiveAdHocCommands() throws IOException {
+		// granting root permission for app
+		// Process root = Runtime.getRuntime().exec("su");
+
 		AdHocCommandManager commandManager = AdHocCommandManager
 				.getAddHocCommandsManager(connection);
-//		commandManager.registerCommand("first_custom_command",
-//				"First Custom Command", Custom_Command.class);
+
+		commandManager.registerCommand("first_custom_command",
+				"First Custom Command", Custom_Command.class);
 		commandManager.registerCommand("send_msg_command",
-		"Send Message Command", Custom_Command_Send.class);
+				"Send Message Command", Custom_Command_Send.class);
+
+		// LocalCommandFactory lcf = new LocalCommandFactory() {
+		//
+		// @Override
+		// public LocalCommand getInstance() throws InstantiationException,
+		// IllegalAccessException {
+		// // TODO Auto-generated method stub
+		// LocalCommand lclc = new LocalCommand() {
+		//
+		// @Override
+		// public void prev() throws NoResponseException, XMPPErrorException,
+		// NotConnectedException {
+		// // TODO Auto-generated method stub
+		//
+		// }
+		//
+		// @Override
+		// public void next(Form arg0) throws NoResponseException,
+		// XMPPErrorException,
+		// NotConnectedException {
+		// // TODO Auto-generated method stub
+		//
+		// }
+		//
+		// @Override
+		// public void execute() throws NoResponseException, XMPPErrorException,
+		// NotConnectedException {
+		// // TODO Auto-generated method stub
+		// System.out.print("lcf");
+		//
+		// }
+		//
+		// @Override
+		// public void complete(Form arg0) throws NoResponseException,
+		// XMPPErrorException, NotConnectedException {
+		// // TODO Auto-generated method stub
+		//
+		// }
+		//
+		// @Override
+		// public void cancel() throws NoResponseException, XMPPErrorException,
+		// NotConnectedException {
+		// // TODO Auto-generated method stub
+		//
+		// }
+		//
+		// @Override
+		// public boolean isLastStage() {
+		// // TODO Auto-generated method stub
+		// return false;
+		// }
+		//
+		// @Override
+		// public boolean hasPermission(String arg0) {
+		// // TODO Auto-generated method stub
+		// return false;
+		// }
+		// };
+		// return lclc;
+		// }
+		// };
+		// commandManager.registerCommand("s", "ss", lcf);
+
+		// try {
+		// commandManager.publishCommands("sender1@farmin.virtus.it");
+		// } catch (XMPPException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// } catch (SmackException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 	}
 
 	// Send AdHoc command Function

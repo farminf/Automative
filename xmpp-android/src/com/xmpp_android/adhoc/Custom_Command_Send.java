@@ -13,7 +13,7 @@ public class Custom_Command_Send extends LocalCommand {
 	@Override
 	public boolean hasPermission(String arg0) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
@@ -40,6 +40,8 @@ public class Custom_Command_Send extends LocalCommand {
 	public void execute() throws NoResponseException, XMPPErrorException,
 			NotConnectedException {
 		// TODO Auto-generated method stub
+		System.out.println("Command Executed in receiver.");
+
 		String addressedUser2 = "android2";
 		String sendmsg = "test ad-hoc successfull";
 		XMPPService.sendMessage(addressedUser2, sendmsg);

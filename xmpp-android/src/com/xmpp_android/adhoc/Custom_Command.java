@@ -11,7 +11,7 @@ public class Custom_Command extends LocalCommand  {
 	@Override
 	public boolean hasPermission(String arg0) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
