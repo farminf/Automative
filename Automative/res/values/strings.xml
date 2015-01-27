@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">xmpp-android</string>
+    <string name="action_settings">Connection Settings</string>
+    <string name="about">About</string>
+    <string name="exit">Exit</string>
+    <string name="user_settings">User Settings</string>
+    <string name="setting_username">Username</string>
+    <string name="setting_password">Password</string>
+    <string name="server_settings">Server Settings</string>
+    <string name="setting_server_ip">Server IP Address</string>
+    <string name="setting_server_port">Server Port</string>
+    <string name="connection_settings">Connection Settings</string>
+    <string name="domain_name">farmin.virtus.it</string>
+    
+  
+</resources>
