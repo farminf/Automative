@@ -18,13 +18,13 @@ public class FragmentPageAdapter extends FragmentStatePagerAdapter{
 		switch (i) {
         case 0:
             //Fragement for Android Tab
-            return new firstTab();
+            return new FirstTab();
         case 1:
            //Fragment for Ios Tab
-            return new secondTab();
+            return new SecondTab();
         case 2:
             //Fragment for Windows Tab
-            return new thirdTab();
+            return new ThirdTab();
         }
     
 		return null;
