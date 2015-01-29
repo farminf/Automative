@@ -1,4 +1,4 @@
-package com.xmpp_android.adhoc;
+package com.automotivevirtus.adhoc;
 
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;

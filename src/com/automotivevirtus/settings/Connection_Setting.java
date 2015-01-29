@@ -1,7 +1,7 @@
-package com.xmpp_android.settings;
+package com.automotivevirtus.settings;
 
 
-import com.xmpp_android.R;
+import com.automotivevirtus.R;
 
 import android.app.Activity;
 import android.os.Bundle;

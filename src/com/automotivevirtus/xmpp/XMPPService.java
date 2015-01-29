@@ -1,4 +1,4 @@
-package com.xmpp_android.xmpp;
+package com.automotivevirtus.xmpp;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -13,7 +13,7 @@ import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 
-import com.xmpp_android.R;
+import com.automotivevirtus.R;
 
 import android.app.NotificationManager;
 import android.app.Service;

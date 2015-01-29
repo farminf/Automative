@@ -1,4 +1,4 @@
-package com.xmpp_android.activities;
+package com.automotivevirtus.activities;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
@@ -18,11 +18,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-import com.xmpp_android.R;
-import com.xmpp_android.settings.About;
-import com.xmpp_android.settings.Connection_Setting;
-import com.xmpp_android.xmpp.XMPP;
-import com.xmpp_android.xmpp.XMPPService;
+import com.automotivevirtus.settings.About;
+import com.automotivevirtus.settings.Connection_Setting;
+import com.automotivevirtus.xmpp.XMPP;
+import com.automotivevirtus.xmpp.XMPPService;
+import com.automotivevirtus.R;
 
 public class MainActivity extends Activity {
 

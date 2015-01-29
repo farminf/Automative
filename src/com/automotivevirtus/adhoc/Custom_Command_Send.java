@@ -1,4 +1,4 @@
-package com.xmpp_android.adhoc;
+package com.automotivevirtus.adhoc;
 
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
@@ -6,7 +6,7 @@ import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smackx.commands.LocalCommand;
 import org.jivesoftware.smackx.xdata.Form;
 
-import com.xmpp_android.xmpp.XMPPService;
+import com.automotivevirtus.xmpp.XMPPService;
 
 public class Custom_Command_Send extends LocalCommand {
 

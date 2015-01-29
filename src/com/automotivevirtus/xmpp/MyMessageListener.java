@@ -1,4 +1,4 @@
-package com.xmpp_android.xmpp;
+package com.automotivevirtus.xmpp;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.MessageListener;

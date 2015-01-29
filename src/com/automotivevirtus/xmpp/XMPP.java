@@ -1,4 +1,4 @@
-package com.xmpp_android.xmpp;
+package com.automotivevirtus.xmpp;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -46,8 +46,8 @@ import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.xmpp_android.adhoc.Custom_Command;
-import com.xmpp_android.adhoc.Custom_Command_Send;
+import com.automotivevirtus.adhoc.Custom_Command;
+import com.automotivevirtus.adhoc.Custom_Command_Send;
 
 public class XMPP {
 

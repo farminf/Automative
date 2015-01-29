@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">xmpp-android</string>
+    <string name="app_name">AutoVir</string>
     <string name="action_settings">Connection Settings</string>
     <string name="about">About</string>
     <string name="exit">Exit</string>
@@ -13,6 +13,10 @@
     <string name="setting_server_port">Server Port</string>
     <string name="connection_settings">Connection Settings</string>
     <string name="domain_name">farmin.virtus.it</string>
+    <string name="first_tab">MSG</string>
+    <string name="second_tab">Map</string>
+    <string name="third_tab">Chat</string>
+    
     
   
 </resources>

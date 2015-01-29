@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.xmpp_android"
+    package="com.automotivevirtus"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -18,7 +18,8 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.xmpp_android.activities.MainActivity"
+            android:name="com.automotivevirtus.activities.MainFragment"
+           
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,11 +28,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.xmpp_android.settings.Connection_Setting"
+            android:name="com.automotivevirtus.settings.Connection_Setting"
             android:label="@string/app_name" >
         </activity>
         
-        <service android:name="com.xmpp_android.xmpp.XMPPService" />
+        <service android:name="com.automotivevirtus.xmpp.XMPPService" />
     </application>
 
 </manifest>
