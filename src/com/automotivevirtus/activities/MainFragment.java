@@ -1,8 +1,10 @@
 package com.automotivevirtus.activities;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -39,16 +41,45 @@ public class MainFragment extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		domain = getString(R.string.domain_name);
+		
+		// Alert Dialogue for network lost
+		//-------------------------------
+		AlertDialog.Builder netDialog = new AlertDialog.Builder(
+				this);
+		netDialog
+				.setMessage(R.string.no_network_message)
+				.setPositiveButton(R.string.mobile_setting,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								// User clicked OK button
+								startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+							}
+						})
+				.setNegativeButton(R.string.cancel,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								// User cancelled the dialog
+							}
+						});
+		// Create the AlertDialog
+					netDialog.create();
+
 		// Check for Network State
 		final ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
 		if (activeNetwork != null && activeNetwork.isConnected()) {
-
+			// We have Network Connectivity
+			
+			// Start the XMPP Service
+			Intent serviceIntent = new Intent(getBaseContext(), XMPPService.class);
+			startService(serviceIntent);
+			
 		} else {
-			Toast.makeText(this, "You're not Connected" , Toast.LENGTH_LONG).show();
+			netDialog.show();
 		}
 
-		domain = getString(R.string.domain_name);
+		//-------------------------------------------------------------
 
 		// Getting User and Server Configuration from Setting shared Preferences
 		getSharedPreference();
@@ -83,9 +114,7 @@ public class MainFragment extends FragmentActivity implements
 		actionBar.addTab(actionBar.newTab().setText(R.string.third_tab)
 				.setTabListener(this));
 		// ------------------------------------------------------
-		// Start the Service
-		Intent serviceIntent = new Intent(getBaseContext(), XMPPService.class);
-		startService(serviceIntent);
+		
 
 	}
 

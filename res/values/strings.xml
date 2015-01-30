@@ -16,7 +16,10 @@
     <string name="first_tab">MSG</string>
     <string name="second_tab">Map</string>
     <string name="third_tab">Chat</string>
-    
-    
-  
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="network_setting">Network Setting</string>
+    <string name="mobile_setting">Setting</string>
+    <string name="no_network_message">There is no connection, Please check your network setting!</string>
+
 </resources>
