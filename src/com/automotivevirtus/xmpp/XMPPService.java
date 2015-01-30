@@ -134,9 +134,9 @@ public class XMPPService extends Service {
 	private void getSharedPreference() {
 		// TODO Auto-generated method stub
 		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		username = sharedPref.getString("textUsername", "");
-		password = sharedPref.getString("textPassword", "");
-		serveraddress = sharedPref.getString("textServerAddress", "");
+		username = sharedPref.getString("textUsername", "android");
+		password = sharedPref.getString("textPassword", "android");
+		serveraddress = sharedPref.getString("textServerAddress", "192.168.1.1");
 		domain = getString(R.string.domain_name);
 		Log.d("Settings in Service", username + "," + password + ","
 				+ serveraddress + ":" + serverport + "," + domain);

@@ -2,16 +2,24 @@ package com.automotivevirtus.activities;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.automotivevirtus.R;
 import com.automotivevirtus.settings.About;
 import com.automotivevirtus.settings.Connection_Setting;
+import com.automotivevirtus.xmpp.XMPPService;
 
 @SuppressWarnings("deprecation")
 public class MainFragment extends FragmentActivity implements
@@ -20,19 +28,38 @@ public class MainFragment extends FragmentActivity implements
 	ViewPager Tab;
 	FragmentPageAdapter TabAdapter;
 
+	SharedPreferences sharedPref;
+	String username;
+	String password;
+	String serveraddress;
+	int serverport;
+	String domain;
+
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		TabAdapter = new FragmentPageAdapter(getSupportFragmentManager());
 
+		// Check for Network State
+		final ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+		if (activeNetwork != null && activeNetwork.isConnected()) {
+
+		} else {
+			Toast.makeText(this, "You're not Connected" , Toast.LENGTH_LONG).show();
+		}
+
+		domain = getString(R.string.domain_name);
+
+		// Getting User and Server Configuration from Setting shared Preferences
+		getSharedPreference();
+
+		// Tab Bar Creation-----------------------------------------
+		// -----------------------------------------------------
+		TabAdapter = new FragmentPageAdapter(getSupportFragmentManager());
 		final ActionBar actionBar = getActionBar();
-		// Specify that the Home/Up button should not be enabled, since there is
-		// no hierarchical
-		// parent.
 		actionBar.setHomeButtonEnabled(false);
 		// Specify that we will be displaying tabs in the action bar.
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
 		Tab = (ViewPager) findViewById(R.id.pager);
 		Tab.setAdapter(TabAdapter);
 		Tab.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -55,6 +82,22 @@ public class MainFragment extends FragmentActivity implements
 				.setTabListener(this));
 		actionBar.addTab(actionBar.newTab().setText(R.string.third_tab)
 				.setTabListener(this));
+		// ------------------------------------------------------
+		// Start the Service
+		Intent serviceIntent = new Intent(getBaseContext(), XMPPService.class);
+		startService(serviceIntent);
+
+	}
+
+	private void getSharedPreference() {
+		// TODO Auto-generated method stub
+		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+		username = sharedPref.getString("textUsername", "");
+		password = sharedPref.getString("textPassword", "");
+		serveraddress = sharedPref.getString("textServerAddress", "");
+		serverport = 5222;
+		Log.d("Settings", username + "," + password + "," + serveraddress + ":"
+				+ serverport);
 
 	}
 

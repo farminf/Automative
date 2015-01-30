@@ -26,14 +26,15 @@
 
       
             <EditTextPreference
-                android:defaultValue="test"
+                android:defaultValue="192.168.1.1"
                 android:key="textServerAddress"
                 android:title="@string/setting_server_ip"	/>
             
             <EditTextPreference
             	android:key="textServerPort"
             	android:numeric="integer"
-            	android:title="@string/setting_server_port" />
+            	android:title="@string/setting_server_port" 
+            	android:defaultValue="5222"/>
                 
 			
 

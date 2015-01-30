@@ -119,7 +119,7 @@ public class XMPP {
 
 				connectionListener = new XMPPConnectionListener();
 				connection.addConnectionListener(connectionListener);
-				// XMPPConnection.DEBUG_ENABLED = true;
+				//XMPPConnection.DEBUG_ENABLED = true;
 
 				try {
 					connection.connect();
@@ -222,6 +222,8 @@ public class XMPP {
 		} catch (InterruptedException | ExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			Log.e("error", "connection error : " + e.getMessage());
+
 		}
 		return retVal;
 
@@ -244,9 +246,13 @@ public class XMPP {
 				}
 			}, 5 * 1000);
 		} catch (SaslException e) {
+			Log.e("error", "connection error : " + e.getMessage());
 		} catch (XMPPException e) {
+			Log.e("error", "connection error : " + e.getMessage());
 		} catch (SmackException e) {
+			Log.e("error", "connection error : " + e.getMessage());
 		} catch (IOException e) {
+			Log.e("error", "connection error : " + e.getMessage());
 		}
 	}
 
