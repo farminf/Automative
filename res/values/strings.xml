@@ -21,5 +21,8 @@
     <string name="network_setting">Network Setting</string>
     <string name="mobile_setting">Setting</string>
     <string name="no_network_message">There is no connection, Please check your network setting!</string>
+    <string name="no_XMPP_message">There is no XMPP connection, Please check your server setting!</string>
+    <string name="server_setting">Setting</string>
+    <string name="no_xmpp_message">There is no available XMPP connection, please check connection setting!</string>
 
 </resources>

@@ -13,22 +13,28 @@ import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 
-import com.automotivevirtus.R;
-
+import android.app.IntentService;
 import android.app.NotificationManager;
-import android.app.Service;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.Process;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
-public class XMPPService extends Service {
+import com.automotivevirtus.R;
+
+public class XMPPService extends IntentService {
+
+	public XMPPService() {
+		super("XMPPService");
+		// TODO Auto-generated constructor stub
+
+	}
 
 	private static SmackAndroid asmk = null;
 
@@ -47,31 +53,49 @@ public class XMPPService extends Service {
 	private final ScheduledExecutorService scheduler = Executors
 			.newScheduledThreadPool(1);
 	static ScheduledFuture<?> senderHandle;
-	//Maybe this is correct
-	//static ScheduledFuture senderHandle;
-
+	// Maybe this is correct
+	// static ScheduledFuture senderHandle;
 
 	static NotificationManager mNotificationManager;
 
+	public ProgressDialog progressDialog;
+
+	LocalBroadcastManager mLocalBroadcastManager;
+
+	Boolean isConnected;
+
 	// Service Methods
 	// ************************************************************
-	@Override
-	public void onCreate() {
-		// TODO Auto-generated method stub
-		// super.onCreate();
+	// ------------------------------------------------------------------
+	// -------------------------------On Start-------------------------
 
-		// Required for using aSmack - also add the DNSjava jar fire in library
+	@Override
+	public void onStart(Intent intent, int startId) {
+		// TODO Auto-generated method stub
+		super.onStart(intent, startId);
+
+		// BroadCast Manager to send broadcast
+		createBroadcastMessage("ShowProgressBar");
+		Log.d("sender", "Broadcasting message in start service");
+	}
+
+	// ------------------------------------------------------------------
+	// -------------------------------On Handle-------------------------
+	@Override
+	protected void onHandleIntent(Intent intent) {
+		// TODO Auto-generated method stub
+
 		asmk = SmackAndroid.init(XMPPService.this);
 
-		// run service on seperate thread
-		HandlerThread thread = new HandlerThread("ServiceStartArguments",
-				Process.THREAD_PRIORITY_BACKGROUND);
-		thread.start();
-
 		getSharedPreference();
+		Log.d("service", "before connect in servive");
 
 		openFireConnection = new XMPP(serveraddress, username, password, domain);
-		if (openFireConnection.connect()) {
+		isConnected = openFireConnection.connect();
+		if (isConnected) {
+			createBroadcastMessage("DismissProgressBar");
+			Log.d("sender",
+					"Broadcasting DismissProgressBar message because we are connected");
 
 			Toast.makeText(getApplicationContext(),
 					"you are connected to server", Toast.LENGTH_LONG).show();
@@ -79,50 +103,96 @@ public class XMPPService extends Service {
 			createNotificationIcon();
 			// Schedule function call
 			// sendForAnHour();
-		} else
+		} else {
+
 			Toast.makeText(getApplicationContext(),
 					"you are NOT connected to server", Toast.LENGTH_LONG)
 					.show();
-
+			createBroadcastMessage("NoXMPPDialog");
+		}
 	}
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		// TODO Auto-generated method stub
-		Toast.makeText(this, "OpenFire Service Started", Toast.LENGTH_LONG)
-				.show();
-		return START_STICKY;
-		// return super.onStartCommand(intent, flags, startId);
-	}
+	// @Override
+	// public void onCreate() {
+	// // TODO Auto-generated method stub
+	// // super.onCreate();
+	//
+	// // progressDialog = new ProgressDialog(XMPPService.this);
+	// // progressDialog.setMessage("Loading..");
+	// // progressDialog.setTitle("Checking Network");
+	// // progressDialog.setIndeterminate(false);
+	// // progressDialog.setCancelable(true);
+	// // progressDialog.show();
+	//
+	// // Required for using aSmack - also add the DNSjava jar fire in library
+	// //asmk = SmackAndroid.init(XMPPService.this);
+	//
+	// // run service on seperate thread
+	// // HandlerThread thread = new HandlerThread("ServiceStartArguments",
+	// // Process.THREAD_PRIORITY_BACKGROUND);
+	// // thread.start();
+	// //
+	// // getSharedPreference();
+	// // Log.d("service", "before connect");
+	//
+	// }
+	//
+	// // @Override
+	// // public int onStartCommand(Intent intent, int flags, int startId) {
+	// // // TODO Auto-generated method stub
+	// // Toast.makeText(this, "OpenFire Service Started", Toast.LENGTH_LONG)
+	// // .show();
+	// //
+	// // return START_STICKY;
+	// // // return super.onStartCommand(intent, flags, startId);
+	// //
+	// // }
+	// //
+	// ------------------------------------------------------------------
+	// -------------------------------On Destroy-------------------------
 
 	@Override
 	public void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		// Disconnecting from Server
-		try {
-			disconnectFromOpenFireServer();
-		} catch (NotConnectedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Log.d("Disconnection Error", e.getMessage());
 
-		}
-		// Deleting all notifications
-		try {
-			cancellAllNotifications();
-		} catch (NotConnectedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Log.d("Notification Error", e.getMessage());
-		}
-		// Cancel periodic job
-		// sendForAnHourCancel();
+		createBroadcastMessage("DismissProgressBar");
+		Log.d("sender",
+				"Broadcasting DismissProgressBar message in destroy service");
 
-		Toast.makeText(this, "OpenFire Service Destroyed", Toast.LENGTH_LONG)
-				.show();
+		if (isConnected) {
+
+			// Disconnecting from Server
+			try {
+				disconnectFromOpenFireServer();
+			} catch (NotConnectedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Log.d("Disconnection Error", e.getMessage());
+
+			}
+			// Deleting all notifications
+			try {
+				cancellAllNotifications();
+			} catch (NotConnectedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Log.d("Notification Error", e.getMessage());
+			}
+			// Cancel periodic job
+			// sendForAnHourCancel();
+
+			Toast.makeText(this, "OpenFire Service Destroyed",
+					Toast.LENGTH_LONG).show();
+
+		} else {
+			Toast.makeText(this, "Check the Server Settings", Toast.LENGTH_LONG)
+					.show();
+		}
 	}
 
+	// ------------------------------------------------------------------
+	// -------------------------------Binder-------------------------
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
@@ -131,12 +201,14 @@ public class XMPPService extends Service {
 
 	// *************************************************************************
 	// *************************************************************************
+
 	private void getSharedPreference() {
 		// TODO Auto-generated method stub
 		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		username = sharedPref.getString("textUsername", "android");
 		password = sharedPref.getString("textPassword", "android");
-		serveraddress = sharedPref.getString("textServerAddress", "192.168.1.1");
+		serveraddress = sharedPref
+				.getString("textServerAddress", "192.168.1.1");
 		domain = getString(R.string.domain_name);
 		Log.d("Settings in Service", username + "," + password + ","
 				+ serveraddress + ":" + serverport + "," + domain);
@@ -239,8 +311,18 @@ public class XMPPService extends Service {
 	}
 
 	// Function to send AdHoc Command
-	public static void sendAdhocCommand(String username , String command) throws XMPPException, SmackException {
+	public static void sendAdhocCommand(String username, String command)
+			throws XMPPException, SmackException {
 
-		openFireConnection.sendAdHocCommands(username , command);
+		openFireConnection.sendAdHocCommands(username, command);
+	}
+
+	private void createBroadcastMessage(String action) {
+		mLocalBroadcastManager = LocalBroadcastManager
+				.getInstance(getApplicationContext());
+		Intent broadcastIntent = new Intent();
+		broadcastIntent.setAction(action);
+		// broadcastIntent.putExtra(whateverExtraData you need to pass back);
+		sendBroadcast(broadcastIntent);
 	}
 }

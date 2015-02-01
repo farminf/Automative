@@ -49,7 +49,7 @@ import android.util.Log;
 import com.automotivevirtus.adhoc.Custom_Command;
 import com.automotivevirtus.adhoc.Custom_Command_Send;
 
-public class XMPP {
+public class XMPP{
 
 	private final static String TAG = "ServiceXMPP";
 
@@ -75,6 +75,7 @@ public class XMPP {
 	// ad-hoc parameter
 	int timeout = 5000;
 
+	
 	// Service Methods
 	// *********************************************************************
 
@@ -86,6 +87,8 @@ public class XMPP {
 		this.loginUser = loginUser;
 		this.passwordUser = passwordUser;
 		this.serverDomain = domain;
+	
+
 	}
 
 	public String logconnected;
@@ -93,16 +96,29 @@ public class XMPP {
 	// Connecting to Server - should call this method in MainActivity
 	public Boolean connect() {
 		Boolean retVal = false;
+
 		AsyncTask<Void, Void, Boolean> connectionThread = new AsyncTask<Void, Void, Boolean>() {
+
+			 @Override
+			 protected void onProgressUpdate(Void... values) {
+			 // TODO Auto-generated method stub
+			    
+			 // super.onProgressUpdate(values);
+			 }
+
+			@Override
+			protected void onCancelled(Boolean result) {
+				// TODO Auto-generated method stub
+				super.onCancelled(result);
+				Log.e("error", "onCancelled Async: ");
+
+			}
 
 			@Override
 			protected void onPreExecute() {
 				// TODO Auto-generated method stub
-				super.onPreExecute();
-				// pdia = new ProgressDialog();
-				// pdia.setMessage("Loading...");
-				// pdia.show();
-
+				// super.onPreExecute();
+						
 			}
 
 			@Override
@@ -119,96 +135,108 @@ public class XMPP {
 
 				connectionListener = new XMPPConnectionListener();
 				connection.addConnectionListener(connectionListener);
-				//XMPPConnection.DEBUG_ENABLED = true;
+				// XMPPConnection.DEBUG_ENABLED = true;
 
 				try {
+					Log.d("XMPP Service", "before connect");
+
 					connection.connect();
 					isConnected = true;
+					Log.d("XMPP Service", "after connect");
 
 				} catch (IOException e) {
 					Log.e("error", "IO Exception error : " + e.getMessage());
+					isConnected = false;
+
 				} catch (SmackException e) {
 					Log.e("error", "Smack Exception error : " + e.getMessage());
+					isConnected = false;
+
 				} catch (XMPPException e) {
 					Log.e("error", "XMPP Exception error : " + e.getMessage());
+					isConnected = false;
+
 				}
+
 				return isConnected;
 
 			}
 
 			@Override
 			protected void onPostExecute(Boolean result) {
-				// print username
-				String connectedusername = connection.getUser();
-				Log.d("Connected Username", connectedusername);
+				// print result
+				//System.out.println(" result in post execute is : " + result);
 
-				// Listener for Chat, if someone sends msg (Start Session by
-				// other user)
-				chatmanager = ChatManager.getInstanceFor(connection);
-				chatmanager.addChatListener(new ChatManagerListener() {
-					@Override
-					public void chatCreated(Chat chat, boolean createdLocally) {
-						if (!createdLocally)
-							chat.addMessageListener(new MyMessageListener());
+				if (result) {
+					// print username
+					String connectedusername = connection.getUser();
+					Log.d("Connected Username", connectedusername);
+
+					// Listener for Chat, if someone sends msg (Start Session by
+					// other user)
+					chatmanager = ChatManager.getInstanceFor(connection);
+					chatmanager.addChatListener(new ChatManagerListener() {
+						@Override
+						public void chatCreated(Chat chat,
+								boolean createdLocally) {
+							if (!createdLocally)
+								chat.addMessageListener(new MyMessageListener());
+						}
+					});
+					// Printing all Roster entries
+					Roster roster = connection.getRoster();
+					Collection<RosterEntry> entries = roster.getEntries();
+					for (RosterEntry entry : entries) {
+						System.out.println(String.format(
+								"Buddy:%1$s - Status:%2$s", entry.getName(),
+								entry.getStatus()));
 					}
-				});
-				// Printing all Roster entries
-				Roster roster = connection.getRoster();
-				Collection<RosterEntry> entries = roster.getEntries();
-				for (RosterEntry entry : entries) {
-					System.out.println(String.format(
-							"Buddy:%1$s - Status:%2$s", entry.getName(),
-							entry.getStatus()));
+					// Roster Listener,if other users's presences changed ,
+					// it'll
+					// print
+					roster.addRosterListener(new RosterListener() {
+
+						@Override
+						public void presenceChanged(Presence presence) {
+							// TODO Auto-generated method stub
+							System.out.println("Presence changed: "
+									+ presence.getFrom() + " " + presence);
+						}
+
+						@Override
+						public void entriesUpdated(Collection<String> arg0) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void entriesDeleted(Collection<String> arg0) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void entriesAdded(Collection<String> arg0) {
+							// TODO Auto-generated method stub
+
+						}
+					});
+
+					// PubSub Node Methods
+					// Create a pubsub manager using an existing XMPPConnection
+					pubsubmgr = new PubSubManager(connection);
+
+					// Register Ad-hoc commands
+					try {
+						// Process root = Runtime.getRuntime().exec("su");
+						receiveAdHocCommands();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					Log.d("if Error", "Connection unsuccessfull");
 				}
-				// Roster Listener,if other users's presences changed , it'll
-				// print
-				roster.addRosterListener(new RosterListener() {
-
-					@Override
-					public void presenceChanged(Presence presence) {
-						// TODO Auto-generated method stub
-						System.out.println("Presence changed: "
-								+ presence.getFrom() + " " + presence);
-					}
-
-					@Override
-					public void entriesUpdated(Collection<String> arg0) {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void entriesDeleted(Collection<String> arg0) {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void entriesAdded(Collection<String> arg0) {
-						// TODO Auto-generated method stub
-
-					}
-				});
-
-				// PubSub Node Methods
-				// Create a pubsub manager using an existing XMPPConnection
-				pubsubmgr = new PubSubManager(connection);
-
-				// Register Ad-hoc commands
-				try {
-					// Process root = Runtime.getRuntime().exec("su");
-					receiveAdHocCommands();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-			}
-
-			@Override
-			protected void onCancelled() {
-				// TODO Auto-generated method stub
-				super.onCancelled();
 			}
 
 		};
@@ -459,9 +487,10 @@ public class XMPP {
 	}
 
 	// Send AdHoc command Function
-	public void sendAdHocCommands(String username , String command) throws XMPPException, SmackException {
-		
-		String usernameToSend = username + "farmin.virtus.it/Smack" ;
+	public void sendAdHocCommands(String username, String command)
+			throws XMPPException, SmackException {
+
+		String usernameToSend = username + "farmin.virtus.it/Smack";
 		DiscoverInfo discoInfo = null;
 		ServiceDiscoveryManager disco = ServiceDiscoveryManager
 				.getInstanceFor(connection);
@@ -481,10 +510,9 @@ public class XMPP {
 		AdHocCommandManager commandManager = AdHocCommandManager
 				.getAddHocCommandsManager(connection);
 		DiscoverItems cmds = null;
-		
+
 		// Retrieves all the commands provided by the receiver
-		cmds = commandManager
-				.discoverCommands(usernameToSend);
+		cmds = commandManager.discoverCommands(usernameToSend);
 		String commandName = null;
 
 		// Verify the present command
@@ -498,8 +526,8 @@ public class XMPP {
 
 		// Retrieve the command to be executed
 		if (commandName != null) {
-			remoteCommand = commandManager.getRemoteCommand(
-					usernameToSend , commandName);
+			remoteCommand = commandManager.getRemoteCommand(usernameToSend,
+					commandName);
 		}
 		remoteCommand.execute();
 		System.out.println("Command executed. Wait " + timeout / 1000

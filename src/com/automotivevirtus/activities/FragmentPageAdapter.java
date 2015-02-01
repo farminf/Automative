@@ -4,7 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-public class FragmentPageAdapter extends FragmentStatePagerAdapter{
+public class FragmentPageAdapter extends FragmentStatePagerAdapter {
+
 
 	public FragmentPageAdapter(FragmentManager fm) {
 		super(fm);
@@ -14,19 +15,19 @@ public class FragmentPageAdapter extends FragmentStatePagerAdapter{
 	@Override
 	public Fragment getItem(int i) {
 		// TODO Auto-generated method stub
-		
+
 		switch (i) {
-        case 0:
-            //Fragement for Android Tab
-            return new FirstTab();
-        case 1:
-           //Fragment for Ios Tab
-            return new SecondTab();
-        case 2:
-            //Fragment for Windows Tab
-            return new ThirdTab();
-        }
-    
+		case 0:
+			
+			return new FirstTab();
+
+		case 1:
+			return new SecondTab();
+
+		case 2:
+			return new ThirdTab();
+		}
+
 		return null;
 	}
 
@@ -36,4 +37,5 @@ public class FragmentPageAdapter extends FragmentStatePagerAdapter{
 		return 3;
 	}
 
+	
 }
