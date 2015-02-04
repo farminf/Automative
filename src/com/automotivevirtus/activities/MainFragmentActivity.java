@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import com.automotivevirtus.R;
 import com.automotivevirtus.settings.About;
 import com.automotivevirtus.settings.Connection_Setting;
+import com.automotivevirtus.xmpp.XMPPService;
 
 @SuppressWarnings("deprecation")
 public class MainFragmentActivity extends FragmentActivity implements
@@ -43,7 +44,14 @@ public class MainFragmentActivity extends FragmentActivity implements
 	AlertDialog.Builder noNetDialog;
 	AlertDialog.Builder noXMPPDialog;
 
+	String[] incomingMessage;
+	String incomingMessageSender;
+	String incomingMessageBody;
+
 	LocalBroadcastManager mLocalBroadcastManager;
+	
+	XMPPService xmppService = new XMPPService();
+	
 	BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -62,6 +70,14 @@ public class MainFragmentActivity extends FragmentActivity implements
 			} else if (action.equals("NoXMPPDialog")) {
 				Log.d("info", "NoXMPPDialog open");
 				noXMPPDialog.show();
+
+			} else if (action.equals("receivedMessage")) {
+				Log.d("info", "receivedMessage Broadcast Received");
+//				incomingMessage = XMPPService.getReceivedMessage();
+//				incomingMessageSender = incomingMessage[0];
+//				incomingMessageBody = incomingMessage[1];
+//				Log.d("incoming message got", incomingMessageSender + ":"
+//						+ incomingMessageBody);
 
 			} else {
 				Log.d("info", "something else received");
@@ -83,19 +99,13 @@ public class MainFragmentActivity extends FragmentActivity implements
 
 		// Alert Dialog for not having any network connectivity
 		noConnectionDialog();
-		
+
 		// Creating Alert for unavailability of XMPP Server
 		noXMPPDialog();
 
 		// Check for Network State
 		final ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
-		if (activeNetwork != null && activeNetwork.isConnected()) {
-			// We have Network Connectivity
-
-		} else {
-			noNetDialog.show();
-		}
 
 		// -------------------------------------------------------------
 
@@ -128,6 +138,31 @@ public class MainFragmentActivity extends FragmentActivity implements
 		actionBar.addTab(actionBar.newTab().setText(R.string.third_tab)
 				.setTabListener(this));
 
+		if (activeNetwork != null && activeNetwork.isConnected()) {
+			// We have Network Connectivity
+
+			// after refreshing if we already have connction or we're fresh
+			// starting?
+			if (xmppService.isConnectedx) {
+				// Do nothing
+			} else {
+				// Starting XMPP Service to connect to Server
+				startXMPPService();
+			}
+
+		} else {
+			noNetDialog.show();
+		}
+
+	}
+
+	// ----------- On Pause ------------------------
+	// ------------------------------------------------------
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
 	}
 
 	// ----------- On Resume ------------------------
@@ -138,13 +173,15 @@ public class MainFragmentActivity extends FragmentActivity implements
 		// TODO Auto-generated method stub
 
 		IntentFilter filter = new IntentFilter();
-		
+
 		filter.addAction("ShowProgressBar");
 		filter.addAction("DismissProgressBar");
 		filter.addAction("NoXMPPDialog");
+		filter.addAction("receivedMessage");
 
 		registerReceiver(broadcastReceiver, filter);
 		Log.d("info", "Broadcast registered");
+		super.onResume();
 
 	}
 
@@ -153,8 +190,8 @@ public class MainFragmentActivity extends FragmentActivity implements
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(
-				broadcastReceiver);
+		LocalBroadcastManager.getInstance(getApplicationContext())
+				.unregisterReceiver(broadcastReceiver);
 		Log.d("info", "Broadcast Destroyed");
 
 		super.onDestroy();
@@ -186,6 +223,14 @@ public class MainFragmentActivity extends FragmentActivity implements
 
 	// -----------------------------------------------------------------
 	// ------------Functions--------------------------------------------
+	private void startXMPPService() {
+		// TODO Auto-generated method stub
+		Intent serviceIntent = new Intent(getApplicationContext(),
+				XMPPService.class);
+		startService(serviceIntent);
+
+	}
+
 	private void getSharedPreference() {
 		// TODO Auto-generated method stub
 		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -281,7 +326,14 @@ public class MainFragmentActivity extends FragmentActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
 		switch (item.getItemId()) {
+		case R.id.refresh:
+			// Restart the main activity
+			finish();
+			Intent refresh = new Intent(this, MainFragmentActivity.class);
+			startActivity(refresh);
+			return true;
 		case R.id.action_settings:
+			// Go to Preference setting
 			Intent ConnectionSettingIntent = new Intent(this,
 					Connection_Setting.class);
 			startActivity(ConnectionSettingIntent);
@@ -291,6 +343,7 @@ public class MainFragmentActivity extends FragmentActivity implements
 			startActivity(aboutIntent);
 			return true;
 		case R.id.exit:
+			xmppService.stopServiceManually();
 			finish();
 			System.exit(0);
 			return true;

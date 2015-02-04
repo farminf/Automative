@@ -27,6 +27,11 @@ public class Connection_Setting extends Activity {
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.connection_setting);
+        
+        
+        
+        
+        
     	}
 	}
 

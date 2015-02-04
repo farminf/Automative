@@ -43,13 +43,19 @@ import org.jivesoftware.smackx.pubsub.PublishModel;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.automotivevirtus.activities.MainFragmentActivity;
 import com.automotivevirtus.adhoc.Custom_Command;
 import com.automotivevirtus.adhoc.Custom_Command_Send;
+import com.automotivevirtus.location.LocationService;
 
-public class XMPP{
+public class XMPP extends Activity {
 
 	private final static String TAG = "ServiceXMPP";
 
@@ -74,24 +80,31 @@ public class XMPP{
 
 	// ad-hoc parameter
 	int timeout = 5000;
+	
+	public String logconnected;
 
 	
+	// Incoming MSG parameter
+	public String incomingMSGBody;
+	public String incomingMSGFrom;
+	//public String[] incomingMSG;
+	
+	Context context;
 	// Service Methods
 	// *********************************************************************
 
 	// *******************************************************************
 	// Defining XMPP Class
 	public XMPP(String serverAddress, String loginUser, String passwordUser,
-			String domain) {
+			String domain , Context ctx) {
 		this.serverAddress = serverAddress;
 		this.loginUser = loginUser;
 		this.passwordUser = passwordUser;
 		this.serverDomain = domain;
-	
+		this.context = ctx;
 
 	}
 
-	public String logconnected;
 
 	// Connecting to Server - should call this method in MainActivity
 	public Boolean connect() {
@@ -99,12 +112,12 @@ public class XMPP{
 
 		AsyncTask<Void, Void, Boolean> connectionThread = new AsyncTask<Void, Void, Boolean>() {
 
-			 @Override
-			 protected void onProgressUpdate(Void... values) {
-			 // TODO Auto-generated method stub
-			    
-			 // super.onProgressUpdate(values);
-			 }
+			@Override
+			protected void onProgressUpdate(Void... values) {
+				// TODO Auto-generated method stub
+
+				// super.onProgressUpdate(values);
+			}
 
 			@Override
 			protected void onCancelled(Boolean result) {
@@ -118,7 +131,7 @@ public class XMPP{
 			protected void onPreExecute() {
 				// TODO Auto-generated method stub
 				// super.onPreExecute();
-						
+
 			}
 
 			@Override
@@ -165,7 +178,7 @@ public class XMPP{
 			@Override
 			protected void onPostExecute(Boolean result) {
 				// print result
-				//System.out.println(" result in post execute is : " + result);
+				// System.out.println(" result in post execute is : " + result);
 
 				if (result) {
 					// print username
@@ -180,7 +193,25 @@ public class XMPP{
 						public void chatCreated(Chat chat,
 								boolean createdLocally) {
 							if (!createdLocally)
-								chat.addMessageListener(new MyMessageListener());
+								chat.addMessageListener(new MyMessageListener() {
+
+									@Override
+									public void processMessage(Chat chat,
+											Message message) {
+										// TODO Auto-generated method stub
+										super.processMessage(chat, message);
+										if (message.getBody() != null) {
+											//String [] MSG = getIncomingMessage(message);
+											getIncomingMessage(message);
+											createBroadcastMessage("receivedMessage");
+											Log.d("ProcessMessage", "message.body is NOT null");
+										}else{
+											Log.d("ProcessMessage", "message.body is null");
+
+										}
+									}
+
+								});
 						}
 					});
 					// Printing all Roster entries
@@ -360,7 +391,7 @@ public class XMPP{
 					@Override
 					public void processMessage(Chat chat, Message message) {
 						// TODO Auto-generated method stub
-						System.out.println("Received message: " + message);
+						System.out.println("Received message is: " + message);
 
 					}
 				});
@@ -539,5 +570,27 @@ public class XMPP{
 			e.printStackTrace();
 		}
 
+	}
+
+	public void getIncomingMessage(Message message) {
+		// TODO Auto-generated method stub
+		System.out.println(String.format(
+				"this is what I get , body : %1$s , from: %2$s",
+				message.getBody(), message.getFrom()));
+		incomingMSGBody = message.getBody().toString();
+		incomingMSGFrom = message.getFrom().toString();
+//		incomingMSG[0] = incomingMSGFrom;
+//		incomingMSG[1] = incomingMSGBody;
+		Log.d("Incoming msg", "inFunction");
+		//return incomingMSG;
+	}
+
+	private void createBroadcastMessage(String action) {
+		LocalBroadcastManager mLocalBroadcastManager = LocalBroadcastManager.getInstance(this.getApplicationContext());
+		Intent broadcastIntent = new Intent();
+		broadcastIntent.setAction(action);
+		//broadcastIntent.putExtra(MSG , true);
+		mLocalBroadcastManager.sendBroadcast(broadcastIntent);
+		Log.d("Broadcast", "sent from XMPP Class");
 	}
 }

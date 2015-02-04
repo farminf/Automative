@@ -1,28 +1,35 @@
 package com.automotivevirtus.activities;
 
+import org.jivesoftware.smack.SmackException.NotConnectedException;
+
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
+import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.automotivevirtus.R;
+import com.automotivevirtus.location.LocationService;
 import com.automotivevirtus.xmpp.XMPP;
 import com.automotivevirtus.xmpp.XMPPService;
 
 public class FirstTab extends Fragment {
 
-	Button btnStartService;
+	Button btnSendAccident;
+	Button btnSendTraffic;
+	Button btnSendWeather;
+	Button btnSendMSG;
+
 	static XMPP openFireConnection;
 	SharedPreferences sharedPref;
 	String username;
@@ -33,26 +40,28 @@ public class FirstTab extends Fragment {
 
 	public ProgressDialog progressDialog;
 
+	LocationService currentLocation;
+	double currentLatitude;
+	double currentLongitude;
+	String curLat;
+	String curLong;
+
+	String msgAccident;
+	String msgTraffic;
+	String msgWeather;
+	String msgCustom;
+
+	String AddressedUser = "android2";
+
+	AlertDialog.Builder customMSGDialog;
+	
+	XMPPService xmppService = new XMPPService();
+
 	// ------------------------------------------------------------------
 	// -------------------------------On Destroy-------------------------
 
-	@Override
-	public void onDestroy() {
-		// TODO Auto-generated method stub
-
-		super.onDestroy();
-
-	}
-
 	// ------------------------------------------------------------------
 	// -------------------------------On resume-------------------------
-
-	@Override
-	public void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-
-	}
 
 	// ------------------------------------------------------------------
 	// -------------------------------On Create View-------------------------
@@ -65,45 +74,75 @@ public class FirstTab extends Fragment {
 
 		getSharedPreference();
 
-		// Alert Dialogue for XMPP lost
-		// -------------------------------
-		// final AlertDialog.Builder errorDialog = new AlertDialog.Builder(
-		// getActivity());
-		// errorDialog
-		// .setMessage(R.string.no_XMPP_message)
-		// .setPositiveButton(R.string.server_setting,
-		// new DialogInterface.OnClickListener() {
-		// public void onClick(DialogInterface dialog, int id) {
-		// // User clicked setting button
-		// // Mobile setting will show up
-		// startActivityForResult(
-		// new Intent(
-		// android.provider.Settings.ACTION_SETTINGS),
-		// 0);
-		// }
-		// })
-		// .setNegativeButton(R.string.cancel,
-		// new DialogInterface.OnClickListener() {
-		// public void onClick(DialogInterface dialog, int id) {
-		// // User cancelled the dialog
-		//
-		// }
-		// });
-		// // Create the AlertDialog
-		// errorDialog.create();
-
-		btnStartService = (Button) view.findViewById(R.id.btnStartService);
-		btnStartService.setOnClickListener(new OnClickListener() {
+		// Accident Button
+		btnSendAccident = (Button) view.findViewById(R.id.btnSendAccident);
+		btnSendAccident.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				// showProgressBar();
-				Intent serviceIntent = new Intent(getActivity()
-						.getBaseContext(), XMPPService.class);
-				getActivity().startService(serviceIntent);
+				try {
+					xmppService.sendMessage(AddressedUser, msgAccident);
+				} catch (NotConnectedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					Log.d("Send msg", "cannot Send A msg: " + e.getMessage());
+
+				}
 			}
 		});
+
+		// Traffic Button
+		btnSendTraffic = (Button) view.findViewById(R.id.btnSendTraffic);
+		btnSendTraffic.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				try {
+					xmppService.sendMessage(AddressedUser, msgTraffic);
+				} catch (NotConnectedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					Log.d("Send msg", "cannot Send A msg: " + e.getMessage());
+
+				}
+			}
+		});
+
+		// Weather Button
+		btnSendWeather = (Button) view.findViewById(R.id.btnSendWeather);
+		btnSendWeather.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				try {
+					xmppService.sendMessage(AddressedUser, msgWeather);
+				} catch (NotConnectedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					Log.d("Send msg", "cannot Send A msg: " + e.getMessage());
+
+				}
+			}
+		});
+
+		// MSG Button
+		btnSendMSG = (Button) view.findViewById(R.id.btnSendMSG);
+		btnSendMSG.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				createCustomMSGDialog();
+				customMSGDialog.show();
+			}
+		});
+
+		currentLocation = new LocationService(getActivity());
+		getCurrentLocation();
+		makeMSGs();
 
 		return view;
 	}
@@ -121,19 +160,70 @@ public class FirstTab extends Fragment {
 
 	}
 
-	public void showProgressBar() {
+	private void getCurrentLocation() {
+		// TODO Auto-generated method stub
+		if (currentLocation.canGetLocation()) {
+			currentLatitude = currentLocation.getLatitude();
+			currentLongitude = currentLocation.getLongitude();
 
-		progressDialog = new ProgressDialog(getActivity());
-		progressDialog.setMessage("Loading..");
-		progressDialog.setTitle("Checking Network");
-		progressDialog.setIndeterminate(false);
-		progressDialog.setCancelable(true);
-		progressDialog.show();
+			curLat = String.valueOf(currentLatitude);
+			curLong = String.valueOf(currentLongitude);
+
+			Log.v("Location", curLat + " " + curLong);
+
+		} else {
+			// GPS or Network no available and ask user to turn on in setting
+			currentLocation.showSettingsAlert();
+		}
 
 	}
 
-	public void dismissProgressBar() {
-		progressDialog.dismiss();
+	private void makeMSGs() {
+		// TODO Auto-generated method stub
+		msgAccident = "accident " + curLat + " " + curLong;
+		msgTraffic = "traffic " + curLat + " " + curLong;
+		msgWeather = "weather " + curLat + " " + curLong;
+
 	}
 
+	private void createCustomMSGDialog() {
+		customMSGDialog = new AlertDialog.Builder(getActivity());
+		// Edit text to get user message
+		final EditText inputMSG = new EditText(getActivity());
+		customMSGDialog.setView(inputMSG);
+
+		customMSGDialog
+				.setMessage(R.string.custom_message_dialog)
+				.setPositiveButton(R.string.send,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								// Read user input
+								Editable Input = inputMSG.getText();
+								String customMSGInput = Input.toString();
+
+								try {
+									xmppService.sendMessage(AddressedUser,
+											customMSGInput);
+								} catch (NotConnectedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+									Log.d("Send msg",
+											"cannot Send A msg: "
+													+ e.getMessage());
+
+								}
+
+							}
+						})
+				.setNegativeButton(R.string.cancel,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								// User cancelled the dialog
+
+							}
+						});
+		// Create the AlertDialog
+		customMSGDialog.create();
+
+	}
 }

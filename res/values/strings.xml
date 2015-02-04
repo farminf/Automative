@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="black">#000000</color>
+    <color name="darkblue">#0099CC</color>
+    <color name="red">#CC0000</color>
+    <color name="orange">#FF8800</color>
+    <color name="green">#99CC00</color>
+    <color name="purple">#9933CC</color>
+    <color name="blue">#33B5E5</color>
+    <color name="darkgreen">#669900</color>
+    <color name="lightblue">#CCEEFF</color>
+    <color name="creamy">#eae5ca</color>
+    <color name="white">#FFFFFF</color>
+    <color name="gray">#c4d2db</color>
+
     <string name="app_name">AutoVir</string>
     <string name="action_settings">Connection Settings</string>
     <string name="about">About</string>
@@ -13,10 +26,11 @@
     <string name="setting_server_port">Server Port</string>
     <string name="connection_settings">Connection Settings</string>
     <string name="domain_name">farmin.virtus.it</string>
-    <string name="first_tab">MSG</string>
+    <string name="first_tab">Messages</string>
     <string name="second_tab">Map</string>
-    <string name="third_tab">Chat</string>
+    <string name="third_tab">Inbox</string>
     <string name="ok">OK</string>
+    <string name="send">Send</string>
     <string name="cancel">Cancel</string>
     <string name="network_setting">Network Setting</string>
     <string name="mobile_setting">Setting</string>
@@ -24,5 +38,8 @@
     <string name="no_XMPP_message">There is no XMPP connection, Please check your server setting!</string>
     <string name="server_setting">Setting</string>
     <string name="no_xmpp_message">There is no available XMPP connection, please check connection setting!</string>
+    <string name="gps_alert_title">Location Service is not available</string>
+    <string name="alert_message">Check your Android Location Service Setting</string>
+    <string name="custom_message_dialog">Write your message and push Send button</string>
 
 </resources>
