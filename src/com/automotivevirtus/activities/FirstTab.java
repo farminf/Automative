@@ -21,6 +21,7 @@ import android.widget.EditText;
 import com.automotivevirtus.R;
 import com.automotivevirtus.location.LocationService;
 import com.automotivevirtus.xmpp.XMPP;
+import com.automotivevirtus.xmpp.XMPPHelper;
 import com.automotivevirtus.xmpp.XMPPService;
 
 public class FirstTab extends Fragment {
@@ -55,7 +56,7 @@ public class FirstTab extends Fragment {
 
 	AlertDialog.Builder customMSGDialog;
 	
-	XMPPService xmppService = new XMPPService();
+	//XMPPService xmppService = new XMPPService();
 
 	// ------------------------------------------------------------------
 	// -------------------------------On Destroy-------------------------
@@ -82,7 +83,7 @@ public class FirstTab extends Fragment {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				try {
-					xmppService.sendMessage(AddressedUser, msgAccident);
+					XMPPHelper.sendMessage(AddressedUser, msgAccident);
 				} catch (NotConnectedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -100,7 +101,7 @@ public class FirstTab extends Fragment {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				try {
-					xmppService.sendMessage(AddressedUser, msgTraffic);
+					XMPPHelper.sendMessage(AddressedUser, msgTraffic);
 				} catch (NotConnectedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -118,7 +119,7 @@ public class FirstTab extends Fragment {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				try {
-					xmppService.sendMessage(AddressedUser, msgWeather);
+					XMPPHelper.sendMessage(AddressedUser, msgWeather);
 				} catch (NotConnectedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -202,7 +203,7 @@ public class FirstTab extends Fragment {
 								String customMSGInput = Input.toString();
 
 								try {
-									xmppService.sendMessage(AddressedUser,
+									XMPPHelper.sendMessage(AddressedUser,
 											customMSGInput);
 								} catch (NotConnectedException e) {
 									// TODO Auto-generated catch block

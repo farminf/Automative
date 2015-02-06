@@ -83,8 +83,6 @@ public class XMPPService extends IntentService {
 
 	private static SmackAndroid asmk = null;
 
-	//static XMPP openFireConnection;
-
 	SharedPreferences sharedPref;
 
 	int notificationID = 111;
@@ -94,8 +92,7 @@ public class XMPPService extends IntentService {
 	String serveraddress;
 	static String domain;
 	int serverport = 5222;
-	
-	
+
 	// Schedule job parameters
 	private final ScheduledExecutorService scheduler = Executors
 			.newScheduledThreadPool(1);
@@ -109,36 +106,19 @@ public class XMPPService extends IntentService {
 
 	LocalBroadcastManager mLocalBroadcastManager;
 
-	public Boolean isConnectedx = false;
+	public Boolean isConnectedService = false;
 
-	public  String[] incomingMSG;
-	
-	
-	
-	
-	
-	
-	
-	// ************************************************************
-	// ************************************************************
-	// ************************************************************
-	// ************************************************************
+	public String[] incomingMSG;
+
 	private final static String TAG = "ServiceXMPP";
 
-	 XMPPConnectionListener connectionListener;
+	XMPPConnectionListener connectionListener;
 
-	// Login Parameters
-	//private String serverAddress;
-	//private String loginUser;
-	//private String passwordUser;
+	private static XMPPConnection connection;
 
-	private  XMPPConnection connection;
+	static ChatManager chatmanager;
 
-	ChatManager chatmanager;
-
-	//private String serverDomain;
-
-	private boolean isConnected = false;
+	public boolean isConnectedXMPP = false;
 
 	// pubsub Parameters
 	PubSubManager pubsubmgr;
@@ -146,25 +126,21 @@ public class XMPPService extends IntentService {
 
 	// ad-hoc parameter
 	int timeout = 5000;
-	
+
 	public String logconnected;
 
-	
 	// Incoming MSG parameter
-	public  String incomingMSGBody;
-	public  String incomingMSGFrom;
-	//public String[] incomingMSG;
-	
-	Context context;
-	
-	
-	
-	// ************************************************************
-	// ************************************************************
-	// ************************************************************
-	// ************************************************************
-	// ************************************************************
+	public String incomingMSGBody;
+	public String incomingMSGFrom;
+	// public String[] incomingMSG;
 
+	Context context;
+
+	// ************************************************************
+	// ************************************************************
+	// ************************************************************
+	// ************************************************************
+	// ************************************************************
 
 	// Service Methods
 	// ************************************************************
@@ -189,21 +165,14 @@ public class XMPPService extends IntentService {
 		// TODO Auto-generated method stub
 
 		asmk = SmackAndroid.init(XMPPService.this);
-
+		domain = getString(R.string.domain_name);
 		getSharedPreference();
 		Log.d("service", "before connect in servive");
-//		Context context = getApplicationContext();
-//		openFireConnection = new XMPP(serveraddress, username, password, domain , context);
-//		isConnected = openFireConnection.connect();
-		
-		XMPPconnect();
-		
-		
-		
-		
-		
-		
-		if (isConnected) {
+
+		isConnectedService = XMPPconnect();
+
+		if (isConnectedService) {
+			createBroadcastMessage("XMPPConnected");
 			createBroadcastMessage("DismissProgressBar");
 			Log.d("Broadcast",
 					"Broadcasting DismissProgressBar message because we are connected");
@@ -231,15 +200,6 @@ public class XMPPService extends IntentService {
 		Log.d("Broadcast",
 				"Broadcasting DismissProgressBar message in destroy service");
 
-		if (isConnectedx) {
-
-			Toast.makeText(this, "OpenFire Service Destroyed",
-					Toast.LENGTH_LONG).show();
-
-		} else {
-			Toast.makeText(this, "Check the Server Settings", Toast.LENGTH_LONG)
-					.show();
-		}
 	}
 
 	// ------------------------------------------------------------------
@@ -252,35 +212,27 @@ public class XMPPService extends IntentService {
 
 	// *************************************************************************
 	// *************************************************************************
-	
-	public  void stopServiceManually() {
+
+	public void stopServiceManually() {
 		// Disconnecting from Server
-
-		if (isConnectedx) {
-			try {
-				disconnectFromOpenFireServer();
-			} catch (NotConnectedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				Log.d("Disconnection Error", e.getMessage());
-
-			}
-			// Deleting all notifications
-			try {
-				cancellAllNotifications();
-			} catch (NotConnectedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				Log.d("Notification Error", e.getMessage());
-			}
-			// Cancel periodic job
-			// sendForAnHourCancel();
-		} else {
-			// Do nothing
-			Log.d("info", "Exit");
+		try {
+			disconnectFromOpenFireServer();
+		} catch (NotConnectedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Log.d("Disconnection Error", e.getMessage());
 
 		}
-
+		// Deleting all notifications
+		try {
+			cancellAllNotifications();
+		} catch (NotConnectedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Log.d("Notification Error", e.getMessage());
+		}
+		// Cancel periodic job
+		// sendForAnHourCancel();
 	}
 
 	private void getSharedPreference() {
@@ -307,15 +259,14 @@ public class XMPPService extends IntentService {
 	}
 
 	// function to send message to addressed user
-	public  void sendMessage(String addressedUser2, String sendmsg)
-			throws NotConnectedException {
-		// TODO Auto-generated method stub
-		chat(addressedUser2, sendmsg);
-	}
+	// public void sendMessage(String addressedUser2, String sendmsg)
+	// throws NotConnectedException {
+	// // TODO Auto-generated method stub
+	// chat(addressedUser2, sendmsg);
+	// }
 
 	// function to Disconnect from openFire
-	public void disconnectFromOpenFireServer()
-			throws NotConnectedException {
+	public void disconnectFromOpenFireServer() throws NotConnectedException {
 		// TODO Auto-generated method stub
 		disconnect();
 		if (asmk != null) {
@@ -328,16 +279,14 @@ public class XMPPService extends IntentService {
 	public void cancellAllNotifications() throws NotConnectedException {
 		// TODO Auto-generated method stub
 		mNotificationManager.cancelAll();
-
 	}
 
 	// function to add user in roster
-	public  void addRosterEntry(String rosterNameToAdd,
-			String rosterNickNameToAdd) throws Exception {
-		// TODO Auto-generated method stub
-		createEntry(rosterNameToAdd, rosterNickNameToAdd);
-
-	}
+	// public void addRosterEntry(String rosterNameToAdd,
+	// String rosterNickNameToAdd) throws Exception {
+	// // TODO Auto-generated method stub
+	// createEntry(rosterNameToAdd, rosterNickNameToAdd);
+	// }
 
 	// Function to do something periodically
 	public void sendForAnHour() {
@@ -359,7 +308,7 @@ public class XMPPService extends IntentService {
 	}
 
 	// Function for cancel periodic job
-	public  void sendForAnHourCancel() {
+	public void sendForAnHourCancel() {
 
 		senderHandle.cancel(true);
 		System.out.println("schedule job cancelled");
@@ -367,35 +316,32 @@ public class XMPPService extends IntentService {
 	}
 
 	// function to create a pub/sub node
-	public  void createPubSubNodex(String nodeName)
-			throws NoResponseException, XMPPErrorException,
-			NotConnectedException {
-
-		createPubSubNode(nodeName);
-	}
+	// public void createPubSubNodex(String nodeName) throws
+	// NoResponseException,
+	// XMPPErrorException, NotConnectedException {
+	// createPubSubNode(nodeName);
+	// }
 
 	// function to subscribe to a node
-	public  void subscribeToNode(String nodeName)
-			throws NoResponseException, XMPPErrorException,
-			NotConnectedException {
-
-		subscribePubSubNode(nodeName);
-	}
+	// public void subscribeToNode(String nodeName) throws NoResponseException,
+	// XMPPErrorException, NotConnectedException {
+	//
+	// subscribePubSubNode(nodeName);
+	// }
 
 	// function to publish to the node
-	public  void publishToNode(String nodeName)
-			throws NoResponseException, XMPPErrorException,
-			NotConnectedException {
-
-		publishToPubSubNode(nodeName);
-	}
+	// public void publishToNode(String nodeName) throws NoResponseException,
+	// XMPPErrorException, NotConnectedException {
+	//
+	// publishToPubSubNode(nodeName);
+	// }
 
 	// Function to send AdHoc Command
-	public  void sendAdhocCommand(String username, String command)
-			throws XMPPException, SmackException {
-
-		sendAdHocCommands(username, command);
-	}
+	// public void sendAdhocCommand(String username, String command)
+	// throws XMPPException, SmackException {
+	//
+	// sendAdHocCommands(username, command);
+	// }
 
 	private void createBroadcastMessage(String action) {
 		mLocalBroadcastManager = LocalBroadcastManager
@@ -405,16 +351,16 @@ public class XMPPService extends IntentService {
 		// broadcastIntent.putExtra(whateverExtraData you need to pass back);
 		sendBroadcast(broadcastIntent);
 	}
-	
-	public String [] getReceivedMessage(){
+
+	public String[] getReceivedMessage() {
 		String body = incomingMSGBody;
 		String sender = incomingMSGFrom;
-		incomingMSG [0]= sender ; 
-		incomingMSG [1] = body;
+		incomingMSG[0] = sender;
+		incomingMSG[1] = body;
 		return incomingMSG;
-		
+
 	}
-	
+
 	// *************************************************************************
 	// *************************************************************************
 	// *************************************************************************
@@ -423,8 +369,6 @@ public class XMPPService extends IntentService {
 	// *************************************************************************
 	// *************************************************************************
 
-	
-	
 	public Boolean XMPPconnect() {
 		Boolean retVal = false;
 
@@ -455,7 +399,7 @@ public class XMPPService extends IntentService {
 			@Override
 			protected Boolean doInBackground(Void... arg0) {
 
-				isConnected = false;
+				// isConnectedXMPP = false;
 				ConnectionConfiguration config = new ConnectionConfiguration(
 						serveraddress, serverport, domain);
 				config.setReconnectionAllowed(true);
@@ -470,26 +414,25 @@ public class XMPPService extends IntentService {
 
 				try {
 					Log.d("XMPP Service", "before connect");
-
 					connection.connect();
-					isConnected = true;
+					isConnectedXMPP = true;
 					Log.d("XMPP Service", "after connect");
 
 				} catch (IOException e) {
 					Log.e("error", "IO Exception error : " + e.getMessage());
-					isConnected = false;
+					isConnectedXMPP = false;
 
 				} catch (SmackException e) {
 					Log.e("error", "Smack Exception error : " + e.getMessage());
-					isConnected = false;
+					isConnectedXMPP = false;
 
 				} catch (XMPPException e) {
 					Log.e("error", "XMPP Exception error : " + e.getMessage());
-					isConnected = false;
+					isConnectedXMPP = false;
 
 				}
 
-				return isConnected;
+				return isConnectedXMPP;
 
 			}
 
@@ -519,12 +462,15 @@ public class XMPPService extends IntentService {
 										// TODO Auto-generated method stub
 										super.processMessage(chat, message);
 										if (message.getBody() != null) {
-											//String [] MSG = getIncomingMessage(message);
+											// String [] MSG =
+											// getIncomingMessage(message);
 											getIncomingMessage(message);
 											createBroadcastMessage("receivedMessage");
-											Log.d("ProcessMessage", "message.body is NOT null");
-										}else{
-											Log.d("ProcessMessage", "message.body is null");
+											Log.d("ProcessMessage",
+													"message.body is NOT null");
+										} else {
+											Log.d("ProcessMessage",
+													"message.body is null");
 
 										}
 									}
@@ -634,7 +580,7 @@ public class XMPPService extends IntentService {
 	}
 
 	// Set Presence or Status of user
-	private void setStatus(boolean available) throws NotConnectedException {
+	public void setStatus(boolean available) throws NotConnectedException {
 		// TODO Auto-generated method stub
 		if (available) {
 			// connection.sendPacket(new Presence(Presence.Type.available));
@@ -702,21 +648,26 @@ public class XMPPService extends IntentService {
 			throws NotConnectedException {
 		// Create username whom we want to send a message
 		String userToSend = AddressedUser + "@" + domain;
+		Log.d("prob", "here1");
 
-		ChatManager chatmanager = ChatManager.getInstanceFor(connection);
+		chatmanager = ChatManager.getInstanceFor(connection);
+		Log.d("prob", "here1.5");
+
 		Chat newChat = chatmanager.createChat(userToSend,
 				new MessageListener() {
 					@Override
 					public void processMessage(Chat chat, Message message) {
 						// TODO Auto-generated method stub
 						System.out.println("Received message is: " + message);
-						//super.processMessage(chat, message);				
+						// super.processMessage(chat, message);
 						if (message.getBody() != null) {
-							//String [] MSG = getIncomingMessage(message);
-							getIncomingMessage(message);
-							createBroadcastMessage("receivedMessage");
+							// String [] MSG = getIncomingMessage(message);
+							Log.d("prob", "here1.6");
+
+							// getIncomingMessage(message);
+							// createBroadcastMessage("receivedMessage");
 							Log.d("ProcessMessage", "message.body is NOT null");
-						}else{
+						} else {
 							Log.d("ProcessMessage", "message.body is null");
 
 						}
@@ -725,7 +676,10 @@ public class XMPPService extends IntentService {
 				});
 
 		try {
+			Log.d("prob", "here2");
 			newChat.sendMessage(sendmsg);
+			Log.d("prob", "here3");
+
 		} catch (XMPPException e) {
 			System.out.println("Error Delivering block");
 		}
@@ -907,11 +861,10 @@ public class XMPPService extends IntentService {
 				message.getBody(), message.getFrom()));
 		incomingMSGBody = message.getBody().toString();
 		incomingMSGFrom = message.getFrom().toString();
-//		incomingMSG[0] = incomingMSGFrom;
-//		incomingMSG[1] = incomingMSGBody;
+		// incomingMSG[0] = incomingMSGFrom;
+		// incomingMSG[1] = incomingMSGBody;
 		Log.d("Incoming msg", "inFunction");
-		//return incomingMSG;
+		// return incomingMSG;
 	}
 
-	
 }

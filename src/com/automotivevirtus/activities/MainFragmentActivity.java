@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import com.automotivevirtus.R;
 import com.automotivevirtus.settings.About;
 import com.automotivevirtus.settings.Connection_Setting;
+import com.automotivevirtus.xmpp.XMPPHelper;
 import com.automotivevirtus.xmpp.XMPPService;
 
 @SuppressWarnings("deprecation")
@@ -34,11 +35,12 @@ public class MainFragmentActivity extends FragmentActivity implements
 	FragmentPageAdapter TabAdapter;
 
 	SharedPreferences sharedPref;
+	SharedPreferences.Editor SharedPrefEditor;
+
 	String username;
 	String password;
 	String serveraddress;
 	int serverport;
-	String domain;
 	int currentFrag;
 
 	AlertDialog.Builder noNetDialog;
@@ -49,9 +51,10 @@ public class MainFragmentActivity extends FragmentActivity implements
 	String incomingMessageBody;
 
 	LocalBroadcastManager mLocalBroadcastManager;
-	
-	XMPPService xmppService = new XMPPService();
-	
+
+
+	Boolean isXMPPConnected = false;
+
 	BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -67,17 +70,26 @@ public class MainFragmentActivity extends FragmentActivity implements
 
 				dismissProgressBar();
 
+			} else if (action.equals("XMPPConnected")) {
+				Log.d("info", "XMPPConnected received");
+
+				isXMPPConnected = true;
+
+				SharedPrefEditor = sharedPref.edit();
+				SharedPrefEditor.putBoolean("isConnectedXMPPServer", true);
+				SharedPrefEditor.commit();
+
 			} else if (action.equals("NoXMPPDialog")) {
 				Log.d("info", "NoXMPPDialog open");
 				noXMPPDialog.show();
 
 			} else if (action.equals("receivedMessage")) {
 				Log.d("info", "receivedMessage Broadcast Received");
-//				incomingMessage = XMPPService.getReceivedMessage();
-//				incomingMessageSender = incomingMessage[0];
-//				incomingMessageBody = incomingMessage[1];
-//				Log.d("incoming message got", incomingMessageSender + ":"
-//						+ incomingMessageBody);
+				incomingMessage = XMPPHelper.getReceivedMessage();
+				incomingMessageSender = incomingMessage[0];
+				incomingMessageBody = incomingMessage[1];
+				Log.d("incoming message got", incomingMessageSender + ":"
+						+ incomingMessageBody);
 
 			} else {
 				Log.d("info", "something else received");
@@ -95,9 +107,8 @@ public class MainFragmentActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		domain = getString(R.string.domain_name);
 
-		// Alert Dialog for not having any network connectivity
+		// create Alert Dialog for not having any network connectivity
 		noConnectionDialog();
 
 		// Creating Alert for unavailability of XMPP Server
@@ -110,6 +121,7 @@ public class MainFragmentActivity extends FragmentActivity implements
 		// -------------------------------------------------------------
 
 		// Getting User and Server Configuration from Setting shared Preferences
+
 		getSharedPreference();
 
 		// Tab Bar Creation-----------------------------------------
@@ -143,14 +155,18 @@ public class MainFragmentActivity extends FragmentActivity implements
 
 			// after refreshing if we already have connction or we're fresh
 			// starting?
-			if (xmppService.isConnectedx) {
+
+			if (isXMPPConnected) {
+				Log.d("!", "We Are Already connected");
 				// Do nothing
 			} else {
+				
 				// Starting XMPP Service to connect to Server
 				startXMPPService();
 			}
 
 		} else {
+
 			noNetDialog.show();
 		}
 
@@ -171,16 +187,25 @@ public class MainFragmentActivity extends FragmentActivity implements
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
-
+		
+		//Register the Broadcast Receiver
 		IntentFilter filter = new IntentFilter();
 
 		filter.addAction("ShowProgressBar");
 		filter.addAction("DismissProgressBar");
 		filter.addAction("NoXMPPDialog");
 		filter.addAction("receivedMessage");
+		filter.addAction("XMPPConnected");
 
 		registerReceiver(broadcastReceiver, filter);
 		Log.d("info", "Broadcast registered");
+		
+		//get isConnected from sharedPreferences, for checking if we are alrady connected or not
+		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+		isXMPPConnected = sharedPref.getBoolean("isConnectedXMPPServer", false);
+		String isc = isXMPPConnected.toString();
+		Log.d("isConnected SharedPref", isc);
+		
 		super.onResume();
 
 	}
@@ -238,6 +263,7 @@ public class MainFragmentActivity extends FragmentActivity implements
 		password = sharedPref.getString("textPassword", "");
 		serveraddress = sharedPref.getString("textServerAddress", "");
 		serverport = 5222;
+
 		Log.d("Settings", username + "," + password + "," + serveraddress + ":"
 				+ serverport);
 
@@ -332,26 +358,36 @@ public class MainFragmentActivity extends FragmentActivity implements
 			Intent refresh = new Intent(this, MainFragmentActivity.class);
 			startActivity(refresh);
 			return true;
+			
 		case R.id.action_settings:
 			// Go to Preference setting
 			Intent ConnectionSettingIntent = new Intent(this,
 					Connection_Setting.class);
 			startActivity(ConnectionSettingIntent);
 			return true;
+			
 		case R.id.about:
 			Intent aboutIntent = new Intent(this, About.class);
 			startActivity(aboutIntent);
 			return true;
+			
 		case R.id.exit:
-			xmppService.stopServiceManually();
+			SharedPrefEditor = sharedPref.edit();
+			SharedPrefEditor.putBoolean("isConnectedXMPPServer", false);
+			SharedPrefEditor.commit();
+
+			if (isXMPPConnected) {
+				XMPPHelper.stopXMPPService();
+			}
+
 			finish();
 			System.exit(0);
 			return true;
+			
 		default:
 			break;
 		}
 		return false;
 
 	}
-
 }
