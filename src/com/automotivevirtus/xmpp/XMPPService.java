@@ -16,6 +16,7 @@ import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.Roster;
@@ -23,10 +24,9 @@ import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.SmackAndroid;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.packet.Message;
@@ -61,12 +61,11 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.automotivevirtus.R;
 import com.automotivevirtus.adhoc.Custom_Command;
 import com.automotivevirtus.adhoc.Custom_Command_Send;
-import com.automotivevirtus.xmpp.XMPP.XMPPConnectionListener;
+import com.automotivevirtus.location.LocationService;
 
 public class XMPPService extends IntentService {
 
@@ -136,6 +135,12 @@ public class XMPPService extends IntentService {
 
 	Context context;
 
+	LocationService currentLocation;
+	double currentLatitude;
+	double currentLongitude;
+	String curLat;
+	String curLong;
+
 	// ************************************************************
 	// ************************************************************
 	// ************************************************************
@@ -172,6 +177,9 @@ public class XMPPService extends IntentService {
 		isConnectedService = XMPPconnect();
 
 		if (isConnectedService) {
+			// Schedule function call
+			//sendForAnHour();
+
 			createBroadcastMessage("XMPPConnected");
 			createBroadcastMessage("DismissProgressBar");
 			Log.d("Broadcast",
@@ -179,8 +187,8 @@ public class XMPPService extends IntentService {
 
 			// Notification
 			createNotificationIcon();
-			// Schedule function call
-			// sendForAnHour();
+			//getCurrentLocation();
+
 		} else {
 
 			Log.d("Broadcast", "you're not connected , in else of handle");
@@ -232,7 +240,7 @@ public class XMPPService extends IntentService {
 			Log.d("Notification Error", e.getMessage());
 		}
 		// Cancel periodic job
-		// sendForAnHourCancel();
+		//sendForAnHourCancel();
 	}
 
 	private void getSharedPreference() {
@@ -293,12 +301,15 @@ public class XMPPService extends IntentService {
 
 		final Runnable sender = new Runnable() {
 			public void run() {
-				System.out.println("sent");
 				Log.d("F", "sendF");
+				getCurrentLocation();
+				Log.d("Current Location in Service", curLat + " " + curLong);
+				// System.out.println("sent");
+				// Log.d("F", "sendF");
 			}
 		};
 
-		senderHandle = scheduler.scheduleAtFixedRate(sender, 10, 10, SECONDS);
+		senderHandle = scheduler.scheduleAtFixedRate(sender, 10, 60, SECONDS);
 
 		scheduler.schedule(new Runnable() {
 			public void run() {
@@ -361,10 +372,6 @@ public class XMPPService extends IntentService {
 
 	}
 
-	// *************************************************************************
-	// *************************************************************************
-	// *************************************************************************
-	// *************************************************************************
 	// *************************************************************************
 	// *************************************************************************
 	// *************************************************************************
@@ -648,11 +655,7 @@ public class XMPPService extends IntentService {
 			throws NotConnectedException {
 		// Create username whom we want to send a message
 		String userToSend = AddressedUser + "@" + domain;
-		Log.d("prob", "here1");
-
 		chatmanager = ChatManager.getInstanceFor(connection);
-		Log.d("prob", "here1.5");
-
 		Chat newChat = chatmanager.createChat(userToSend,
 				new MessageListener() {
 					@Override
@@ -662,8 +665,6 @@ public class XMPPService extends IntentService {
 						// super.processMessage(chat, message);
 						if (message.getBody() != null) {
 							// String [] MSG = getIncomingMessage(message);
-							Log.d("prob", "here1.6");
-
 							// getIncomingMessage(message);
 							// createBroadcastMessage("receivedMessage");
 							Log.d("ProcessMessage", "message.body is NOT null");
@@ -676,9 +677,8 @@ public class XMPPService extends IntentService {
 				});
 
 		try {
-			Log.d("prob", "here2");
+
 			newChat.sendMessage(sendmsg);
-			Log.d("prob", "here3");
 
 		} catch (XMPPException e) {
 			System.out.println("Error Delivering block");
@@ -865,6 +865,25 @@ public class XMPPService extends IntentService {
 		// incomingMSG[1] = incomingMSGBody;
 		Log.d("Incoming msg", "inFunction");
 		// return incomingMSG;
+	}
+
+	private void getCurrentLocation() {
+		// TODO Auto-generated method stub
+		currentLocation = new LocationService(getApplicationContext());
+		if (currentLocation.canGetLocation()) {
+			currentLatitude = currentLocation.getLatitude();
+			currentLongitude = currentLocation.getLongitude();
+
+			curLat = String.valueOf(currentLatitude);
+			curLong = String.valueOf(currentLongitude);
+
+			Log.v("Location", "lat:" +curLat + " long: " + curLong);
+
+		} else {
+			// GPS or Network no available and ask user to turn on in setting
+			currentLocation.showSettingsAlert();
+		}
+
 	}
 
 }

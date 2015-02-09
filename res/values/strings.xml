@@ -16,7 +16,10 @@
 
     <string name="app_name">AutoVir</string>
     <string name="action_settings">Connection Settings</string>
+    <string name="wifi_settings">Wifi Settings</string>
     <string name="about">About</string>
+    <string name="about_text">This Application has been written as a practical master thesis work of University of Bologna and ISMB Lab.\n
+        This app connects to Virtus middleware through OpenFire server and support XMPP functionalities.\n \n Developed by "Farmin Farzin" </string>
     <string name="exit">Exit</string>
     <string name="user_settings">User Settings</string>
     <string name="setting_username">Username</string>

@@ -1,5 +1,11 @@
 package com.automotivevirtus.activities;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
@@ -14,6 +20,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
@@ -22,6 +29,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.automotivevirtus.R;
+import com.automotivevirtus.location.LocationService;
+import com.automotivevirtus.location.UpdateLocationService;
 import com.automotivevirtus.settings.About;
 import com.automotivevirtus.settings.Connection_Setting;
 import com.automotivevirtus.xmpp.XMPPHelper;
@@ -50,10 +59,24 @@ public class MainFragmentActivity extends FragmentActivity implements
 	String incomingMessageSender;
 	String incomingMessageBody;
 
+	ProgressDialog progressDialog;
+
 	LocalBroadcastManager mLocalBroadcastManager;
 
-
 	Boolean isXMPPConnected = false;
+
+	LocationService currentLocation;
+	double currentLatitude;
+	double currentLongitude;
+	String curLat;
+	String curLong;
+
+	// Schedule job parameters
+	private final ScheduledExecutorService scheduler = Executors
+			.newScheduledThreadPool(1);
+	static ScheduledFuture<?> senderHandle;
+	// Maybe this is correct
+	// static ScheduledFuture senderHandle;
 
 	BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
@@ -79,6 +102,9 @@ public class MainFragmentActivity extends FragmentActivity implements
 				SharedPrefEditor.putBoolean("isConnectedXMPPServer", true);
 				SharedPrefEditor.commit();
 
+				// startUpdateLocationService();
+				sendForAnHour();
+
 			} else if (action.equals("NoXMPPDialog")) {
 				Log.d("info", "NoXMPPDialog open");
 				noXMPPDialog.show();
@@ -99,14 +125,11 @@ public class MainFragmentActivity extends FragmentActivity implements
 		}
 	};
 
-	ProgressDialog progressDialog;
-
 	// ---------------------------------------------------------------
 	// ----------------------On Create ----------------------------------
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
 
 		// create Alert Dialog for not having any network connectivity
 		noConnectionDialog();
@@ -129,6 +152,8 @@ public class MainFragmentActivity extends FragmentActivity implements
 		TabAdapter = new FragmentPageAdapter(getSupportFragmentManager());
 		final ActionBar actionBar = getActionBar();
 		actionBar.setHomeButtonEnabled(false);
+		// actionBar.setDisplayHomeAsUpEnabled(true);
+
 		// Specify that we will be displaying tabs in the action bar.
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		Tab = (ViewPager) findViewById(R.id.pager);
@@ -153,14 +178,13 @@ public class MainFragmentActivity extends FragmentActivity implements
 		if (activeNetwork != null && activeNetwork.isConnected()) {
 			// We have Network Connectivity
 
-			// after refreshing if we already have connction or we're fresh
+			// after refreshing if we already have connection or we're fresh
 			// starting?
 
 			if (isXMPPConnected) {
 				Log.d("!", "We Are Already connected");
 				// Do nothing
 			} else {
-				
 				// Starting XMPP Service to connect to Server
 				startXMPPService();
 			}
@@ -179,6 +203,9 @@ public class MainFragmentActivity extends FragmentActivity implements
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
+		LocalBroadcastManager.getInstance(getApplicationContext())
+				.unregisterReceiver(broadcastReceiver);
+		Log.d("info", "Broadcast Unregistered in onPause");
 	}
 
 	// ----------- On Resume ------------------------
@@ -187,8 +214,9 @@ public class MainFragmentActivity extends FragmentActivity implements
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
-		
-		//Register the Broadcast Receiver
+		super.onResume();
+
+		// Register the Broadcast Receiver
 		IntentFilter filter = new IntentFilter();
 
 		filter.addAction("ShowProgressBar");
@@ -199,14 +227,25 @@ public class MainFragmentActivity extends FragmentActivity implements
 
 		registerReceiver(broadcastReceiver, filter);
 		Log.d("info", "Broadcast registered");
-		
-		//get isConnected from sharedPreferences, for checking if we are alrady connected or not
+
+		// get isConnected from sharedPreferences, for checking if we are
+		// already connected or not
 		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		isXMPPConnected = sharedPref.getBoolean("isConnectedXMPPServer", false);
 		String isc = isXMPPConnected.toString();
 		Log.d("isConnected SharedPref", isc);
-		
-		super.onResume();
+
+	}
+
+	// -----------------------------------------------
+	// ------------------on Stop-----------------------------------
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+//		LocalBroadcastManager.getInstance(getApplicationContext())
+//				.unregisterReceiver(broadcastReceiver);
+//		Log.d("info", "Broadcast Unregistered in onStop");
 
 	}
 
@@ -215,11 +254,11 @@ public class MainFragmentActivity extends FragmentActivity implements
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
+		super.onDestroy();
 		LocalBroadcastManager.getInstance(getApplicationContext())
 				.unregisterReceiver(broadcastReceiver);
 		Log.d("info", "Broadcast Destroyed");
 
-		super.onDestroy();
 	}
 
 	// ------------------------------------------------------
@@ -253,6 +292,18 @@ public class MainFragmentActivity extends FragmentActivity implements
 		Intent serviceIntent = new Intent(getApplicationContext(),
 				XMPPService.class);
 		startService(serviceIntent);
+		// Intent serviceIntent = new Intent(getApplicationContext(),
+		// ServiceXMPP.class);
+		// startService(serviceIntent);
+		// showProgressBar();
+
+	}
+
+	private void startUpdateLocationService() {
+		// TODO Auto-generated method stub
+		Intent serviceIntent = new Intent(getApplicationContext(),
+				UpdateLocationService.class);
+		startService(serviceIntent);
 
 	}
 
@@ -263,6 +314,8 @@ public class MainFragmentActivity extends FragmentActivity implements
 		password = sharedPref.getString("textPassword", "");
 		serveraddress = sharedPref.getString("textServerAddress", "");
 		serverport = 5222;
+
+		isXMPPConnected = sharedPref.getBoolean("isConnectedXMPPServer", false);
 
 		Log.d("Settings", username + "," + password + "," + serveraddress + ":"
 				+ serverport);
@@ -338,6 +391,53 @@ public class MainFragmentActivity extends FragmentActivity implements
 		noXMPPDialog.create();
 	}
 
+	public void sendForAnHour() {
+
+		final Runnable sender = new Runnable() {
+			public void run() {
+				Log.d("F", "sendF");
+				startUpdateLocationService();
+				// System.out.println("sent");
+				// Log.d("F", "sendF");
+			}
+		};
+
+		senderHandle = scheduler.scheduleAtFixedRate(sender, 30, 60, SECONDS);
+
+		scheduler.schedule(new Runnable() {
+			public void run() {
+				senderHandle.cancel(true);
+			}
+		}, 60 * 60, SECONDS);
+	}
+
+	// Function for cancel periodic job
+	public void sendForAnHourCancel() {
+
+		senderHandle.cancel(true);
+		System.out.println("schedule job cancelled");
+
+	}
+
+	private void getCurrentLocation() {
+		// TODO Auto-generated method stub
+		currentLocation = new LocationService(getApplicationContext());
+		if (currentLocation.canGetLocation()) {
+			currentLatitude = currentLocation.getLatitude();
+			currentLongitude = currentLocation.getLongitude();
+
+			curLat = String.valueOf(currentLatitude);
+			curLong = String.valueOf(currentLongitude);
+
+			Log.v("Location", "lat:" + curLat + " long: " + curLong);
+
+		} else {
+			// GPS or Network no available and ask user to turn on in setting
+			currentLocation.showSettingsAlert();
+		}
+
+	}
+
 	// Setting Menu -------------------------------------
 	// --------------------------------------------------
 
@@ -352,25 +452,35 @@ public class MainFragmentActivity extends FragmentActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
 		switch (item.getItemId()) {
-		case R.id.refresh:
-			// Restart the main activity
-			finish();
-			Intent refresh = new Intent(this, MainFragmentActivity.class);
-			startActivity(refresh);
+
+		case android.R.id.home:
+			onBackPressed();
 			return true;
-			
+
 		case R.id.action_settings:
 			// Go to Preference setting
 			Intent ConnectionSettingIntent = new Intent(this,
 					Connection_Setting.class);
 			startActivity(ConnectionSettingIntent);
 			return true;
-			
+
+		case R.id.refresh:
+			// Restart the main activity
+			finish();
+			Intent refresh = new Intent(this, MainFragmentActivity.class);
+			startActivity(refresh);
+			return true;
+
+		case R.id.wifi_setting:
+			Intent WifiIntent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+			startActivity(WifiIntent);
+			return true;
+
 		case R.id.about:
 			Intent aboutIntent = new Intent(this, About.class);
 			startActivity(aboutIntent);
 			return true;
-			
+
 		case R.id.exit:
 			SharedPrefEditor = sharedPref.edit();
 			SharedPrefEditor.putBoolean("isConnectedXMPPServer", false);
@@ -378,12 +488,13 @@ public class MainFragmentActivity extends FragmentActivity implements
 
 			if (isXMPPConnected) {
 				XMPPHelper.stopXMPPService();
+				sendForAnHourCancel();
 			}
 
 			finish();
 			System.exit(0);
 			return true;
-			
+
 		default:
 			break;
 		}

@@ -20,9 +20,7 @@ import android.widget.EditText;
 
 import com.automotivevirtus.R;
 import com.automotivevirtus.location.LocationService;
-import com.automotivevirtus.xmpp.XMPP;
 import com.automotivevirtus.xmpp.XMPPHelper;
-import com.automotivevirtus.xmpp.XMPPService;
 
 public class FirstTab extends Fragment {
 
@@ -31,7 +29,7 @@ public class FirstTab extends Fragment {
 	Button btnSendWeather;
 	Button btnSendMSG;
 
-	static XMPP openFireConnection;
+	//static XMPP openFireConnection;
 	SharedPreferences sharedPref;
 	String username;
 	String password;
@@ -56,14 +54,6 @@ public class FirstTab extends Fragment {
 
 	AlertDialog.Builder customMSGDialog;
 	
-	//XMPPService xmppService = new XMPPService();
-
-	// ------------------------------------------------------------------
-	// -------------------------------On Destroy-------------------------
-
-	// ------------------------------------------------------------------
-	// -------------------------------On resume-------------------------
-
 	// ------------------------------------------------------------------
 	// -------------------------------On Create View-------------------------
 

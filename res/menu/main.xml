@@ -4,10 +4,22 @@
 
     <item
         android:id="@+id/action_settings"
+        android:icon="@drawable/ic_action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="@string/action_settings"/>   
+    <item
+        android:id="@+id/refresh"
+        android:icon="@drawable/ic_action_refresh"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="Refresh"/>
+    <item
+        android:id="@+id/wifi_setting"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/action_settings"/>
-    <item
+        android:title="@string/wifi_settings"/>
+     <item
         android:id="@+id/about"
         android:orderInCategory="100"
         android:showAsAction="never"
@@ -17,11 +29,5 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/exit"/>
-    <item
-        android:id="@+id/refresh"
-        android:icon="@drawable/ic_action_refresh"
-        android:orderInCategory="100"
-        android:showAsAction="ifRoom"
-        android:title="Refresh"/>
 
 </menu>
