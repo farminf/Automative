@@ -17,6 +17,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.automotivevirtus.R;
 import com.automotivevirtus.location.LocationService;
@@ -24,12 +25,12 @@ import com.automotivevirtus.xmpp.XMPPHelper;
 
 public class FirstTab extends Fragment {
 
-	Button btnSendAccident;
-	Button btnSendTraffic;
-	Button btnSendWeather;
-	Button btnSendMSG;
+	ImageButton btnSendAccident;
+	ImageButton btnSendTraffic;
+	ImageButton btnSendWeather;
+	ImageButton btnSendMSG;
 
-	//static XMPP openFireConnection;
+	// static XMPP openFireConnection;
 	SharedPreferences sharedPref;
 	String username;
 	String password;
@@ -53,7 +54,8 @@ public class FirstTab extends Fragment {
 	String AddressedUser = "android2";
 
 	AlertDialog.Builder customMSGDialog;
-	
+	AlertDialog.Builder SentMSGDialog;
+
 	// ------------------------------------------------------------------
 	// -------------------------------On Create View-------------------------
 
@@ -61,66 +63,71 @@ public class FirstTab extends Fragment {
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.first_tab, container, false);
 
+		// setRetainInstance(true);
+
 		domain = getString(R.string.domain_name);
 
 		getSharedPreference();
 
 		// Accident Button
-		btnSendAccident = (Button) view.findViewById(R.id.btnSendAccident);
+		btnSendAccident = (ImageButton) view.findViewById(R.id.btnSendAccident);
 		btnSendAccident.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				createSentMSGDialog("Accident");
 				try {
 					XMPPHelper.sendMessage(AddressedUser, msgAccident);
 				} catch (NotConnectedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					Log.d("Send msg", "cannot Send A msg: " + e.getMessage());
-
 				}
+				SentMSGDialog.show();
 			}
 		});
 
 		// Traffic Button
-		btnSendTraffic = (Button) view.findViewById(R.id.btnSendTraffic);
+		btnSendTraffic = (ImageButton) view.findViewById(R.id.btnSendTraffic);
 		btnSendTraffic.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				createSentMSGDialog("Traffic");
 				try {
 					XMPPHelper.sendMessage(AddressedUser, msgTraffic);
 				} catch (NotConnectedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					Log.d("Send msg", "cannot Send A msg: " + e.getMessage());
-
 				}
+				SentMSGDialog.show();
 			}
 		});
 
 		// Weather Button
-		btnSendWeather = (Button) view.findViewById(R.id.btnSendWeather);
+		btnSendWeather = (ImageButton) view.findViewById(R.id.btnSendWeather);
 		btnSendWeather.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				createSentMSGDialog("Weather");
 				try {
 					XMPPHelper.sendMessage(AddressedUser, msgWeather);
 				} catch (NotConnectedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					Log.d("Send msg", "cannot Send A msg: " + e.getMessage());
-
 				}
+				SentMSGDialog.show();
 			}
 		});
 
 		// MSG Button
-		btnSendMSG = (Button) view.findViewById(R.id.btnSendMSG);
+		btnSendMSG = (ImageButton) view.findViewById(R.id.btnSendMSG);
 		btnSendMSG.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -215,6 +222,25 @@ public class FirstTab extends Fragment {
 						});
 		// Create the AlertDialog
 		customMSGDialog.create();
+
+	}
+
+	// Show sent acceptance Dialog to User
+	private void createSentMSGDialog(String event) {
+		SentMSGDialog = new AlertDialog.Builder(getActivity());
+		String dialogMSG = event + " "
+				+ getString(R.string.custom_sent_message_dialog);
+
+		SentMSGDialog.setMessage(dialogMSG).setPositiveButton(R.string.ok,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+
+					}
+
+				});
+
+		// Create the AlertDialog
+		SentMSGDialog.create();
 
 	}
 }

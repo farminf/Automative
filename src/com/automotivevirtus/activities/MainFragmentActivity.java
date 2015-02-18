@@ -16,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import com.automotivevirtus.xmpp.XMPPService;
 @SuppressWarnings("deprecation")
 public class MainFragmentActivity extends FragmentActivity implements
 		ActionBar.TabListener {
+
 
 	ViewPager Tab;
 	FragmentPageAdapter TabAdapter;
@@ -243,9 +245,9 @@ public class MainFragmentActivity extends FragmentActivity implements
 	protected void onStop() {
 		// TODO Auto-generated method stub
 		super.onStop();
-//		LocalBroadcastManager.getInstance(getApplicationContext())
-//				.unregisterReceiver(broadcastReceiver);
-//		Log.d("info", "Broadcast Unregistered in onStop");
+		// LocalBroadcastManager.getInstance(getApplicationContext())
+		// .unregisterReceiver(broadcastReceiver);
+		// Log.d("info", "Broadcast Unregistered in onStop");
 
 	}
 
@@ -402,13 +404,13 @@ public class MainFragmentActivity extends FragmentActivity implements
 			}
 		};
 
-		senderHandle = scheduler.scheduleAtFixedRate(sender, 30, 60, SECONDS);
+		senderHandle = scheduler.scheduleAtFixedRate(sender, 30, 300, SECONDS);
 
-		scheduler.schedule(new Runnable() {
-			public void run() {
-				senderHandle.cancel(true);
-			}
-		}, 60 * 60, SECONDS);
+		// scheduler.schedule(new Runnable() {
+		// public void run() {
+		// senderHandle.cancel(true);
+		// }
+		// }, 60 * 60, SECONDS);
 	}
 
 	// Function for cancel periodic job

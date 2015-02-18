@@ -26,7 +26,9 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.automotivevirtus.activities.MainFragmentActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
+            <!-- android:configChanges="keyboardHidden|orientation|screenSize" -->
+           
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,7 +37,8 @@
         </activity>
         <activity
             android:name="com.automotivevirtus.settings.Connection_Setting"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/PreferencesTheme" >
         </activity>
         <activity
             android:name="com.automotivevirtus.settings.About"

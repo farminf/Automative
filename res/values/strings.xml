@@ -13,6 +13,7 @@
     <color name="creamy">#eae5ca</color>
     <color name="white">#FFFFFF</color>
     <color name="gray">#c4d2db</color>
+    <color name="darkgray">#474747</color>
 
     <string name="app_name">AutoVir</string>
     <string name="action_settings">Connection Settings</string>
@@ -44,5 +45,6 @@
     <string name="gps_alert_title">Location Service is not available</string>
     <string name="alert_message">Check your Android Location Service Setting</string>
     <string name="custom_message_dialog">Write your message and push Send button</string>
+    <string name="custom_sent_message_dialog">message has been sent.</string>
 
 </resources>

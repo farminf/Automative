@@ -1,46 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-        xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory
-            android:title="@string/user_settings">
-
-        
-        
-          <EditTextPreference
-                android:defaultValue="android"
-                android:key="textUsername"
-                android:title="@string/setting_username"
-                />
-           <EditTextPreference
-                android:defaultValue="android"
-                android:key="textPassword"
-                android:title="@string/setting_password"
-				/>
-           
+    <PreferenceCategory android:title="@string/user_settings" >
+        <EditTextPreference
+            android:defaultValue="android"
+            android:key="textUsername"
+            android:title="@string/setting_username" />
+        <EditTextPreference
+            android:defaultValue="android"
+            android:key="textPassword"
+            android:title="@string/setting_password" />
     </PreferenceCategory>
-
-     
-    <PreferenceCategory
-            android:title="@string/server_settings">
-
-      
-            <EditTextPreference
-                android:defaultValue="192.168.1.1"
-                android:key="textServerAddress"
-                android:title="@string/setting_server_ip"	/>
-            
-            <EditTextPreference
-            	android:key="textServerPort"
-            	android:numeric="integer"
-            	android:title="@string/setting_server_port" 
-            	android:defaultValue="5222"/>
-                
-			
-
-       
+    <PreferenceCategory android:title="@string/server_settings" >
+        <EditTextPreference
+            android:defaultValue="192.168.1.1"
+            android:key="textServerAddress"
+            android:title="@string/setting_server_ip" />
+        <EditTextPreference
+            android:defaultValue="5222"
+            android:key="textServerPort"
+            android:numeric="integer"
+            android:title="@string/setting_server_port" />
     </PreferenceCategory>
-
-   
 
 </PreferenceScreen>
