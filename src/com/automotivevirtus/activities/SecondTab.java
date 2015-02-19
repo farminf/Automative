@@ -17,8 +17,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class SecondTab extends Fragment {
@@ -28,9 +30,17 @@ public class SecondTab extends Fragment {
 	MapView mapView;
 	GoogleMap map;
 	LatLng CENTER = null;
+	LatLng Accident = null;
+	LatLng Traffic = null;
 
-	double longitudeDouble;
 	double latitudeDouble;
+	double longitudeDouble;
+
+	double accidentLatitudeDouble;
+	double accidentLongitudeDouble;
+	
+	double trafficLatitudeDouble;
+	double trafficLongitudeDouble;
 
 	Location location;
 
@@ -42,10 +52,19 @@ public class SecondTab extends Fragment {
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.second_tab, container, false);
 
+		accidentLatitudeDouble = 45.061590;
+		accidentLongitudeDouble = 7.657642;
+		
+		trafficLatitudeDouble = 45.060290;
+		trafficLongitudeDouble = 7.651042;
+
 		// Get Location , Lat and Long
 		LS = new LocationService(getActivity());
 		getCurrentLocation();
 		CENTER = new LatLng(latitudeDouble, longitudeDouble);
+		Accident = new LatLng(accidentLatitudeDouble, accidentLongitudeDouble);
+		Traffic = new LatLng(trafficLatitudeDouble, trafficLongitudeDouble);
+
 		//
 		// // Get Map and Set it
 		// mapView = (MapView) view.findViewById(R.id.map);
@@ -93,12 +112,33 @@ public class SecondTab extends Fragment {
 		super.onResume();
 		if (map == null) {
 			map = fragment.getMap();
-			map.addMarker(new MarkerOptions().position(CENTER).title(CurrentLocationTag)
-					.snippet(""));
+			
+			map.addMarker(new MarkerOptions().position(CENTER)
+					.title(CurrentLocationTag).snippet(""));
+			//Accident Marker
+			Marker accidentMarker = map.addMarker(new MarkerOptions()
+					.position(Accident)
+					.title("Accident")
+					.icon(BitmapDescriptorFactory
+							.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+					.snippet("extra info"));
+			accidentMarker.showInfoWindow();
 
+			//
+			Marker trafficMarker = map.addMarker(new MarkerOptions()
+			.position(Traffic)
+			.title("Traffic")
+			.icon(BitmapDescriptorFactory
+					.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+			.snippet("extra info"));
+			
+			trafficMarker.showInfoWindow();
+			
+			
+			//------
 			map.setIndoorEnabled(true);
 			map.setMyLocationEnabled(true);
-			map.moveCamera(CameraUpdateFactory.zoomTo(5));
+			map.moveCamera(CameraUpdateFactory.zoomTo(14));
 
 			if (CENTER != null) {
 				map.animateCamera(CameraUpdateFactory.newLatLng(CENTER), 1750,
@@ -124,61 +164,61 @@ public class SecondTab extends Fragment {
 	// ----------------------------------------------------------------------------
 	// **************************************************************************
 
-//	private void setMapView() {
-//		// TODO Auto-generated method stub
-//
-//		MapsInitializer.initialize(getActivity());
-//
-//		switch (GooglePlayServicesUtil
-//				.isGooglePlayServicesAvailable(getActivity())) {
-//
-//		case ConnectionResult.SUCCESS:
-//
-//			Log.d("info", "connection map success!!");
-//
-//			map = mapView.getMap();
-//			if (map == null) {
-//
-//				Log.d("", "Map Fragment Not Found or no Map in it!!");
-//
-//			}
-//			map.clear();
-//
-//			try {
-//				map.addMarker(new MarkerOptions().position(CENTER)
-//						.title(CurrentLocationTag).snippet(""));
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//
-//			map.setIndoorEnabled(true);
-//			map.setMyLocationEnabled(true);
-//			map.moveCamera(CameraUpdateFactory.zoomTo(5));
-//			if (CENTER != null) {
-//				map.animateCamera(CameraUpdateFactory.newLatLng(CENTER), 1750,
-//						null);
-//			}
-//			// add circle
-//			CircleOptions circle = new CircleOptions();
-//			circle.center(CENTER).fillColor(Color.BLUE).radius(10);
-//			map.addCircle(circle);
-//			map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-//
-//			break;
-//
-//		case ConnectionResult.SERVICE_MISSING:
-//			Log.d("info", "connection map missing!!");
-//
-//			break;
-//		case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
-//			Log.d("info", "connection map update required!!");
-//
-//			break;
-//		default:
-//			Log.d("info", "connection  map default!!");
-//
-//		}
-//	}
+	// private void setMapView() {
+	// // TODO Auto-generated method stub
+	//
+	// MapsInitializer.initialize(getActivity());
+	//
+	// switch (GooglePlayServicesUtil
+	// .isGooglePlayServicesAvailable(getActivity())) {
+	//
+	// case ConnectionResult.SUCCESS:
+	//
+	// Log.d("info", "connection map success!!");
+	//
+	// map = mapView.getMap();
+	// if (map == null) {
+	//
+	// Log.d("", "Map Fragment Not Found or no Map in it!!");
+	//
+	// }
+	// map.clear();
+	//
+	// try {
+	// map.addMarker(new MarkerOptions().position(CENTER)
+	// .title(CurrentLocationTag).snippet(""));
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	//
+	// map.setIndoorEnabled(true);
+	// map.setMyLocationEnabled(true);
+	// map.moveCamera(CameraUpdateFactory.zoomTo(5));
+	// if (CENTER != null) {
+	// map.animateCamera(CameraUpdateFactory.newLatLng(CENTER), 1750,
+	// null);
+	// }
+	// // add circle
+	// CircleOptions circle = new CircleOptions();
+	// circle.center(CENTER).fillColor(Color.BLUE).radius(10);
+	// map.addCircle(circle);
+	// map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+	//
+	// break;
+	//
+	// case ConnectionResult.SERVICE_MISSING:
+	// Log.d("info", "connection map missing!!");
+	//
+	// break;
+	// case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
+	// Log.d("info", "connection map update required!!");
+	//
+	// break;
+	// default:
+	// Log.d("info", "connection  map default!!");
+	//
+	// }
+	// }
 
 	private void getCurrentLocation() {
 		// TODO Auto-generated method stub

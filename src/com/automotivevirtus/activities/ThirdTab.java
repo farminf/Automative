@@ -45,11 +45,13 @@ public class ThirdTab extends Fragment {
 
 		};
 
-		// adapter = new CustomAdapter(getActivity(), services);
 		adapter = new ArrayAdapter<>(getActivity(),
 				android.R.layout.simple_list_item_multiple_choice,
 				virtusServices);
 		listview.setAdapter(adapter);
+		
+		// Listener for check or uncheck
+		
 		listview.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -60,7 +62,7 @@ public class ThirdTab extends Fragment {
 				if (lv.isItemChecked(position)) {
 
 					Toast.makeText(getActivity(),
-							"You checked " + virtusServices[position],
+							"You have subscribed to " + virtusServices[position],
 							Toast.LENGTH_SHORT).show();
 					// Subscribe to checked node
 					switch (virtusServices[position]) {
@@ -147,7 +149,7 @@ public class ThirdTab extends Fragment {
 					}
 
 					Toast.makeText(getActivity(),
-							"You unchecked " + virtusServices[position],
+							"You have unsubscribed to " + virtusServices[position],
 							Toast.LENGTH_SHORT).show();
 				}
 

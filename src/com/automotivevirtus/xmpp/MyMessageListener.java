@@ -10,8 +10,9 @@ public class MyMessageListener implements MessageListener {
 	public void processMessage(Chat chat, Message message) {
 		// TODO Auto-generated method stub
 		String from = message.getFrom();
-	    String body = message.getBody();
-	    System.out.println(String.format("Received message '%1$s' from %2$s", body, from));
+		String body = message.getBody();
+		System.out.println(String.format("Received message '%1$s' from %2$s",
+				body, from));
 	}
 
 }
