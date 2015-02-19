@@ -3,6 +3,7 @@ package com.automotivevirtus.xmpp;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.io.IOException;
+import java.text.BreakIterator;
 import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -120,8 +121,8 @@ public class XMPPService extends IntentService {
 	public boolean isConnectedXMPP = false;
 
 	// pubsub Parameters
-	PubSubManager pubsubmgr;
-	LeafNode Createdleaf;
+	 PubSubManager pubsubmgr;
+	 LeafNode Createdleaf;
 
 	// ad-hoc parameter
 	int timeout = 5000;
@@ -188,7 +189,8 @@ public class XMPPService extends IntentService {
 			// Notification
 			createNotificationIcon();
 			//getCurrentLocation();
-
+		
+			
 		} else {
 
 			Log.d("Broadcast", "you're not connected , in else of handle");
@@ -527,7 +529,15 @@ public class XMPPService extends IntentService {
 					// PubSub Node Methods
 					// Create a pubsub manager using an existing XMPPConnection
 					pubsubmgr = new PubSubManager(connection);
-
+					//Create pubsub node
+					try {
+						createPubSubNode("Android");
+					} catch (NoResponseException | XMPPErrorException
+							| NotConnectedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 					// Register Ad-hoc commands
 					try {
 						// Process root = Runtime.getRuntime().exec("su");
@@ -737,8 +747,9 @@ public class XMPPService extends IntentService {
 		form.setNotifyRetract(true);
 		form.setPersistentItems(true);
 		form.setPublishModel(PublishModel.open);
-		Createdleaf = (LeafNode) pubsubmgr.createNode(nodeName, form);
-
+		Log.d("PubSubNode", "trying to create" + nodeName);
+		Createdleaf = (LeafNode) pubsubmgr.createNode(nodeName , form);
+		Log.d("PubSubNode", nodeName + "has created	2");
 		// return leaf;
 	}
 
@@ -766,6 +777,13 @@ public class XMPPService extends IntentService {
 			NotConnectedException {
 
 		// Get the node
+		if(pubsubmgr == null){
+			Log.d("error", "pubsubmng is null");
+			pubsubmgr = new PubSubManager(connection);
+		}
+		if (nodeName == null){
+			Log.d("error", "nodename is null");
+		}else{
 		LeafNode node = pubsubmgr.getNode(nodeName);
 		node.addItemEventListener(new ItemEventListener<Item>() {
 
@@ -777,8 +795,18 @@ public class XMPPService extends IntentService {
 		});
 
 		node.subscribe(connection.getUser());
+		
 		Log.d("subscribe", " [pubsub] User " + connection.getUser()
 				+ " subscribed successfully to node " + node);
+		}
+	}
+	
+	public void unsubscribePubSubNode(String nodeName)
+			throws NoResponseException, XMPPErrorException, NotConnectedException{
+		
+		LeafNode node = pubsubmgr.getNode(nodeName);
+		node.unsubscribe(connection.getUser());
+				
 	}
 
 	// *********************************************

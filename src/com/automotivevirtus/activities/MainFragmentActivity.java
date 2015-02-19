@@ -6,6 +6,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
+import org.jivesoftware.smack.SmackException.NoResponseException;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.XMPPException.XMPPErrorException;
+
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
@@ -138,6 +142,8 @@ public class MainFragmentActivity extends FragmentActivity implements
 
 		// Creating Alert for unavailability of XMPP Server
 		noXMPPDialog();
+		
+		
 
 		// Check for Network State
 		final ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -189,6 +195,7 @@ public class MainFragmentActivity extends FragmentActivity implements
 			} else {
 				// Starting XMPP Service to connect to Server
 				startXMPPService();
+				
 			}
 
 		} else {
@@ -294,10 +301,7 @@ public class MainFragmentActivity extends FragmentActivity implements
 		Intent serviceIntent = new Intent(getApplicationContext(),
 				XMPPService.class);
 		startService(serviceIntent);
-		// Intent serviceIntent = new Intent(getApplicationContext(),
-		// ServiceXMPP.class);
-		// startService(serviceIntent);
-		// showProgressBar();
+		
 
 	}
 

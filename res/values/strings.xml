@@ -32,7 +32,7 @@
     <string name="domain_name">farmin.virtus.it</string>
     <string name="first_tab">Messages</string>
     <string name="second_tab">Map</string>
-    <string name="third_tab">Inbox</string>
+    <string name="third_tab">Services</string>
     <string name="ok">OK</string>
     <string name="send">Send</string>
     <string name="cancel">Cancel</string>
@@ -46,5 +46,10 @@
     <string name="alert_message">Check your Android Location Service Setting</string>
     <string name="custom_message_dialog">Write your message and push Send button</string>
     <string name="custom_sent_message_dialog">message has been sent.</string>
+    <string name="select_service_text">Subscribe to services that you want</string>
+    <string name="pubsub_settings">Pub/Sub Settings</string>
+    <string name="accident_pusub_node">Accident Pub/Sub Node name</string>
+    <string name="traffic_pusub_node">Traffic Pub/Sub Node name</string>
+    <string name="weather_pusub_node">Weather Pub/Sub Node name</string>
 
 </resources>

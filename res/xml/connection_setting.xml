@@ -22,5 +22,19 @@
             android:numeric="integer"
             android:title="@string/setting_server_port" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pubsub_settings" >
+        <EditTextPreference
+            android:defaultValue="accident"
+            android:key="accidentpubsubnode"
+            android:title="@string/accident_pusub_node" />
+        <EditTextPreference
+            android:defaultValue="traffic"
+            android:key="trafficpubsubnode"
+            android:title="@string/traffic_pusub_node" />
+        <EditTextPreference
+            android:defaultValue="weather"
+            android:key="weatherpubsubnode"
+            android:title="@string/weather_pusub_node" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

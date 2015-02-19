@@ -46,15 +46,23 @@ public class XMPPHelper extends Activity {
 		xmppService.createEntry(rosterNameToAdd, rosterNickNameToAdd);
 	}
 
-	public void createPubSubNodex(String nodeName) throws NoResponseException,
-			XMPPErrorException, NotConnectedException {
-		xmppService.createPubSubNode(nodeName);
-	}
+//	public static void createPubSubNode(String nodeName) throws NoResponseException,
+//			XMPPErrorException, NotConnectedException {
+//		xmppService.createPubSubNode(nodeName);
+//	}
 
-	public void subscribeToNode(String nodeName) throws NoResponseException,
-			XMPPErrorException, NotConnectedException {
+	public static void subscribeToNode(String nodeName)
+			throws NoResponseException, XMPPErrorException,
+			NotConnectedException {
 
 		xmppService.subscribePubSubNode(nodeName);
+	}
+
+	public static void unSubscribeToNode(String nodeName)
+			throws NoResponseException, XMPPErrorException,
+			NotConnectedException {
+
+		xmppService.unsubscribePubSubNode(nodeName);
 	}
 
 	public void publishToNode(String nodeName) throws NoResponseException,
