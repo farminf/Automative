@@ -76,5 +76,6 @@ public class XMPPHelper extends Activity {
 
 		xmppService.sendAdHocCommands(username, command);
 	}
+	
 
 }

@@ -2,15 +2,23 @@ package com.automotivevirtus.xmpp;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.text.BreakIterator;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.harmony.javax.security.sasl.SaslException;
 import org.jivesoftware.smack.Chat;
@@ -49,6 +57,11 @@ import org.jivesoftware.smackx.pubsub.PubSubManager;
 import org.jivesoftware.smackx.pubsub.PublishModel;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -59,11 +72,13 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.provider.DocumentsContract.Document;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.automotivevirtus.R;
+import com.automotivevirtus.activities.SecondTab;
 import com.automotivevirtus.adhoc.Custom_Command;
 import com.automotivevirtus.adhoc.Custom_Command_Send;
 import com.automotivevirtus.location.LocationService;
@@ -79,6 +94,7 @@ public class XMPPService extends IntentService {
 	public XMPPService() {
 		super("XMPPService");
 		// TODO Auto-generated constructor stub
+		
 	}
 
 	private static SmackAndroid asmk = null;
@@ -121,8 +137,8 @@ public class XMPPService extends IntentService {
 	public boolean isConnectedXMPP = false;
 
 	// pubsub Parameters
-	 PubSubManager pubsubmgr;
-	 LeafNode Createdleaf;
+	PubSubManager pubsubmgr;
+	LeafNode Createdleaf;
 
 	// ad-hoc parameter
 	int timeout = 5000;
@@ -141,6 +157,11 @@ public class XMPPService extends IntentService {
 	double currentLongitude;
 	String curLat;
 	String curLong;
+
+	DocumentBuilder builder;
+	org.w3c.dom.Document document;
+	double LatVir;
+	double LonVir;
 
 	// ************************************************************
 	// ************************************************************
@@ -179,7 +200,7 @@ public class XMPPService extends IntentService {
 
 		if (isConnectedService) {
 			// Schedule function call
-			//sendForAnHour();
+			// sendForAnHour();
 
 			createBroadcastMessage("XMPPConnected");
 			createBroadcastMessage("DismissProgressBar");
@@ -188,9 +209,8 @@ public class XMPPService extends IntentService {
 
 			// Notification
 			createNotificationIcon();
-			//getCurrentLocation();
-		
-			
+			// getCurrentLocation();
+
 		} else {
 
 			Log.d("Broadcast", "you're not connected , in else of handle");
@@ -242,7 +262,7 @@ public class XMPPService extends IntentService {
 			Log.d("Notification Error", e.getMessage());
 		}
 		// Cancel periodic job
-		//sendForAnHourCancel();
+		// sendForAnHourCancel();
 	}
 
 	private void getSharedPreference() {
@@ -529,7 +549,7 @@ public class XMPPService extends IntentService {
 					// PubSub Node Methods
 					// Create a pubsub manager using an existing XMPPConnection
 					pubsubmgr = new PubSubManager(connection);
-					//Create pubsub node
+					// Create pubsub node
 					try {
 						createPubSubNode("Android");
 					} catch (NoResponseException | XMPPErrorException
@@ -537,7 +557,7 @@ public class XMPPService extends IntentService {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
+
 					// Register Ad-hoc commands
 					try {
 						// Process root = Runtime.getRuntime().exec("su");
@@ -748,7 +768,7 @@ public class XMPPService extends IntentService {
 		form.setPersistentItems(true);
 		form.setPublishModel(PublishModel.open);
 		Log.d("PubSubNode", "trying to create" + nodeName);
-		Createdleaf = (LeafNode) pubsubmgr.createNode(nodeName , form);
+		Createdleaf = (LeafNode) pubsubmgr.createNode(nodeName, form);
 		Log.d("PubSubNode", nodeName + "has created	2");
 		// return leaf;
 	}
@@ -777,36 +797,92 @@ public class XMPPService extends IntentService {
 			NotConnectedException {
 
 		// Get the node
-		if(pubsubmgr == null){
+		if (pubsubmgr == null) {
 			Log.d("error", "pubsubmng is null");
 			pubsubmgr = new PubSubManager(connection);
 		}
-		if (nodeName == null){
+		if (nodeName == null) {
 			Log.d("error", "nodename is null");
-		}else{
-		LeafNode node = pubsubmgr.getNode(nodeName);
-		node.addItemEventListener(new ItemEventListener<Item>() {
+		} else {
+			LeafNode node = pubsubmgr.getNode(nodeName);
+			// node.addItemEventListener(new ItemEventListener<Item>() {
+			//
+			// @Override
+			// public void handlePublishedItems(ItemPublishEvent<Item> arg0) {
+			// // TODO Auto-generated method stub
+			//
+			// }
+			// });
+			node.addItemEventListener(new ItemEventListener<Item>() {
 
-			@Override
-			public void handlePublishedItems(ItemPublishEvent<Item> items) {
-				// TODO Auto-generated method stub
+				@Override
+				public void handlePublishedItems(ItemPublishEvent<Item> items) {
+					// TODO Auto-generated method stub
+					// geting XML of that
+					Item data;
+					System.out.println("Number of items: "
+							+ items.getItems().size());
+					List<Item> allitems = items.getItems();
+					data = allitems.get(0);
+					String xml = data.toXML();
 
-			}
-		});
+					// parsing the xml
+					DocumentBuilderFactory factory = DocumentBuilderFactory
+							.newInstance();
+					try {
+						builder = factory.newDocumentBuilder();
+					} catch (ParserConfigurationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					try {
+						ByteArrayInputStream bis = new ByteArrayInputStream(xml
+								.getBytes());
+						document = builder.parse(bis);
+					} catch (SAXException | IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Node n = document.getFirstChild();
+					NodeList nl = n.getChildNodes();
 
-		node.subscribe(connection.getUser());
-		
-		Log.d("subscribe", " [pubsub] User " + connection.getUser()
-				+ " subscribed successfully to node " + node);
+					// getting content of each tag from xml
+					Node an, an2;
+					an = nl.item(0);
+					if (an.getNodeType() == Node.ELEMENT_NODE) {
+						NodeList nl2 = an.getChildNodes();
+						an2 = nl2.item(0);
+						String firstChild = an2.getFirstChild().getTextContent();
+						String secondChild = an2.getFirstChild().getNextSibling()
+								.getTextContent();
+						String thirdChild = an2.getFirstChild().getNextSibling()
+								.getNextSibling().getTextContent();
+					
+						System.out.println(firstChild + " " + secondChild + " " + thirdChild);
+						
+						LatVir = Double.parseDouble(secondChild);
+						LonVir = Double.parseDouble(thirdChild);
+						
+						
+					}
+
+				}
+			});
+
+			node.subscribe(connection.getUser());
+
+			Log.d("subscribe", " [pubsub] User " + connection.getUser()
+					+ " subscribed successfully to node " + node);
 		}
 	}
-	
+
 	public void unsubscribePubSubNode(String nodeName)
-			throws NoResponseException, XMPPErrorException, NotConnectedException{
-		
+			throws NoResponseException, XMPPErrorException,
+			NotConnectedException {
+
 		LeafNode node = pubsubmgr.getNode(nodeName);
 		node.unsubscribe(connection.getUser());
-				
+
 	}
 
 	// *********************************************
@@ -905,7 +981,7 @@ public class XMPPService extends IntentService {
 			curLat = String.valueOf(currentLatitude);
 			curLong = String.valueOf(currentLongitude);
 
-			Log.v("Location", "lat:" +curLat + " long: " + curLong);
+			Log.v("Location", "lat:" + curLat + " long: " + curLong);
 
 		} else {
 			// GPS or Network no available and ask user to turn on in setting

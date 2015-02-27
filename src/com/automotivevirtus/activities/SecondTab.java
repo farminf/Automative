@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.automotivevirtus.R;
 import com.automotivevirtus.location.LocationService;
@@ -41,6 +42,9 @@ public class SecondTab extends Fragment {
 	
 	double trafficLatitudeDouble;
 	double trafficLongitudeDouble;
+	
+	double trafficLatV;
+	double trafficLonV;
 
 	Location location;
 
@@ -113,6 +117,7 @@ public class SecondTab extends Fragment {
 		if (map == null) {
 			map = fragment.getMap();
 			
+			//Current Location Marker
 			map.addMarker(new MarkerOptions().position(CENTER)
 					.title(CurrentLocationTag).snippet(""));
 			//Accident Marker
@@ -124,7 +129,7 @@ public class SecondTab extends Fragment {
 					.snippet("extra info"));
 			accidentMarker.showInfoWindow();
 
-			//
+			//Traffic Marker
 			Marker trafficMarker = map.addMarker(new MarkerOptions()
 			.position(Traffic)
 			.title("Traffic")
@@ -239,4 +244,6 @@ public class SecondTab extends Fragment {
 		}
 
 	}
+	
+	
 }
