@@ -1,5 +1,6 @@
 package com.automotivevirtus.activities;
 
+import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.automotivevirtus.R;
+import com.automotivevirtus.db.DBAdapter;
 import com.automotivevirtus.location.LocationService;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -33,6 +35,7 @@ public class SecondTab extends Fragment {
 	LatLng CENTER = null;
 	LatLng Accident = null;
 	LatLng Traffic = null;
+	LatLng Traffic2 = null;
 
 	double latitudeDouble;
 	double longitudeDouble;
@@ -45,6 +48,8 @@ public class SecondTab extends Fragment {
 	
 	double trafficLatV;
 	double trafficLonV;
+    DBAdapter myDb;
+
 
 	Location location;
 
@@ -59,7 +64,7 @@ public class SecondTab extends Fragment {
 		accidentLatitudeDouble = 45.061590;
 		accidentLongitudeDouble = 7.657642;
 		
-		trafficLatitudeDouble = 45.060290;
+		trafficLatitudeDouble = 45.061990;
 		trafficLongitudeDouble = 7.651042;
 
 		// Get Location , Lat and Long
@@ -68,7 +73,17 @@ public class SecondTab extends Fragment {
 		CENTER = new LatLng(latitudeDouble, longitudeDouble);
 		Accident = new LatLng(accidentLatitudeDouble, accidentLongitudeDouble);
 		Traffic = new LatLng(trafficLatitudeDouble, trafficLongitudeDouble);
+		
+		myDb = new DBAdapter(getActivity());
+        myDb.open();
+		if (myDb.checkDBEmpty() != 0){
+		Cursor cursor = myDb.getRow(1);
+		trafficLatV = cursor.getDouble(DBAdapter.COL_LAT);
+		trafficLonV = cursor.getDouble(DBAdapter.COL_LON);
+		Traffic2 = new LatLng(trafficLatV, trafficLonV);
 
+		} 
+		
 		//
 		// // Get Map and Set it
 		// mapView = (MapView) view.findViewById(R.id.map);
@@ -83,7 +98,11 @@ public class SecondTab extends Fragment {
 	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
-
+		
+//		myDb = new DBAdapter(getActivity());
+//        myDb.open();
+//        
+        
 		FragmentManager fm = getChildFragmentManager();
 		fragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
 		if (fragment == null) {
@@ -138,6 +157,16 @@ public class SecondTab extends Fragment {
 			.snippet("extra info"));
 			
 			trafficMarker.showInfoWindow();
+			
+			//Traffic2 Marker
+			Marker trafficMarker2 = map.addMarker(new MarkerOptions()
+			.position(Traffic2)
+			.title("Traffic2")
+			.icon(BitmapDescriptorFactory
+					.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
+			.snippet("extra info"));
+			
+			trafficMarker2.showInfoWindow();
 			
 			
 			//------

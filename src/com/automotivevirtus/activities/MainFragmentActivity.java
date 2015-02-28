@@ -34,12 +34,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.automotivevirtus.R;
+import com.automotivevirtus.db.DBAdapter;
 import com.automotivevirtus.location.LocationService;
 import com.automotivevirtus.location.UpdateLocationService;
 import com.automotivevirtus.settings.About;
 import com.automotivevirtus.settings.Connection_Setting;
 import com.automotivevirtus.xmpp.XMPPHelper;
 import com.automotivevirtus.xmpp.XMPPService;
+import com.automotivevirtus.xmpp.service;
 
 @SuppressWarnings("deprecation")
 public class MainFragmentActivity extends FragmentActivity implements
@@ -76,6 +78,9 @@ public class MainFragmentActivity extends FragmentActivity implements
 	double currentLongitude;
 	String curLat;
 	String curLong;
+	
+    DBAdapter myDb;
+
 
 	// Schedule job parameters
 	private final ScheduledExecutorService scheduler = Executors
@@ -143,7 +148,10 @@ public class MainFragmentActivity extends FragmentActivity implements
 		// Creating Alert for unavailability of XMPP Server
 		noXMPPDialog();
 		
-		
+		openDB();
+		if (myDb != null){
+			Log.d("in main", "myDb is not null");
+		}
 
 		// Check for Network State
 		final ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -301,6 +309,9 @@ public class MainFragmentActivity extends FragmentActivity implements
 		Intent serviceIntent = new Intent(getApplicationContext(),
 				XMPPService.class);
 		startService(serviceIntent);
+//		Intent serviceIntent = new Intent(getBaseContext(),
+//				service.class);
+//		startService(serviceIntent);
 		
 
 	}
@@ -443,6 +454,16 @@ public class MainFragmentActivity extends FragmentActivity implements
 		}
 
 	}
+	
+	private void closeDB() {
+        myDb.close();
+
+    }
+
+    private void openDB() {
+        myDb = new DBAdapter(this);
+        myDb.open();
+    }
 
 	// Setting Menu -------------------------------------
 	// --------------------------------------------------
@@ -496,7 +517,7 @@ public class MainFragmentActivity extends FragmentActivity implements
 				XMPPHelper.stopXMPPService();
 				sendForAnHourCancel();
 			}
-
+			closeDB();
 			finish();
 			System.exit(0);
 			return true;

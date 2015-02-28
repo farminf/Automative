@@ -6,15 +6,21 @@ import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 
+import com.automotivevirtus.db.DBAdapter;
+
 import android.app.Activity;
 
 public class XMPPHelper extends Activity {
 
+//	static service xmppService = new service();
 	static XMPPService xmppService = new XMPPService();
+
 
 	Boolean isConnectedService;
 
 	static String[] incomingMSG;
+
+	 DBAdapter myDb;
 
 	// ********************************************************************
 	// ********************************************************************
@@ -77,5 +83,14 @@ public class XMPPHelper extends Activity {
 		xmppService.sendAdHocCommands(username, command);
 	}
 	
-
+	public void insertToDB(String lat, String lon){
+			
+		myDb.insertRow("Traffic", lat, lon);
+	}
+	public void opendb(){
+		myDb = new DBAdapter(XMPPHelper.this);
+		myDb.open();
+	}
+	
+	
 }

@@ -4,10 +4,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
-import java.text.BreakIterator;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -25,7 +22,6 @@ import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.Roster;
@@ -33,10 +29,11 @@ import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.SmackAndroid;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.SmackException.NoResponseException;
-import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
+import org.jivesoftware.smack.SmackException.NoResponseException;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
@@ -57,49 +54,31 @@ import org.jivesoftware.smackx.pubsub.PubSubManager;
 import org.jivesoftware.smackx.pubsub.PublishModel;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import android.app.IntentService;
+import com.automotivevirtus.R;
+import com.automotivevirtus.adhoc.Custom_Command;
+import com.automotivevirtus.adhoc.Custom_Command_Send;
+import com.automotivevirtus.db.DBAdapter;
+import com.automotivevirtus.location.LocationService;
+import com.automotivevirtus.xmpp.XMPPService.XMPPConnectionListener;
+
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.provider.DocumentsContract.Document;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.automotivevirtus.R;
-import com.automotivevirtus.activities.AutoVir;
-import com.automotivevirtus.activities.MainFragmentActivity;
-import com.automotivevirtus.activities.SecondTab;
-import com.automotivevirtus.adhoc.Custom_Command;
-import com.automotivevirtus.adhoc.Custom_Command_Send;
-import com.automotivevirtus.db.DBAdapter;
-import com.automotivevirtus.location.LocationService;
-import com.google.android.gms.internal.my;
-
-public class XMPPService extends IntentService {
-
-	@Override
-	public void onCreate() {
-		// TODO Auto-generated method stub
-		super.onCreate();
-	}
-
-	public XMPPService() {
-		super("XMPPService");
-		// TODO Auto-generated constructor stub
-
-	}
+public class service extends Service {
 
 	private static SmackAndroid asmk = null;
 
@@ -168,46 +147,23 @@ public class XMPPService extends IntentService {
 	double LonVir;
 
 	DBAdapter myDb;
-	XMPPHelper xx = new XMPPHelper();
 
 	// ************************************************************
 	// ************************************************************
 	// ************************************************************
 	// ************************************************************
-	// ************************************************************
-
-	// Service Methods
-	// ************************************************************
-	// ------------------------------------------------------------------
-	// -------------------------------On Start-------------------------
 
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
+	public void onCreate() {
 		// TODO Auto-generated method stub
-		// BroadCast Manager to send broadcast
-
-		createBroadcastMessage("ShowProgressBar");
-		Log.d("Broadcast", "Broadcasting message in start service");
-		super.onStartCommand(intent, flags, startId);
-		return START_STICKY;
-	}
-
-	// ------------------------------------------------------------------
-	// -------------------------------On Handle-------------------------
-	@Override
-	protected void onHandleIntent(Intent intent) {
-		// TODO Auto-generated method stub
-		XMPPHelper xx = new XMPPHelper();
-		xx.opendb();
-
-		asmk = SmackAndroid.init(XMPPService.this);
+		asmk = SmackAndroid.init(service.this);
 		domain = getString(R.string.domain_name);
 		getSharedPreference();
 		Log.d("service", "before connect in servive");
 
 		isConnectedService = XMPPconnect();
+		openDB();
 
-		context = getApplicationContext();
 		if (isConnectedService) {
 			// Schedule function call
 			// sendForAnHour();
@@ -228,30 +184,35 @@ public class XMPPService extends IntentService {
 		}
 	}
 
-	// ------------------------------------------------------------------
-	// -------------------------------On Destroy-------------------------
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		// TODO Auto-generated method stub
+
+		createBroadcastMessage("ShowProgressBar");
+		Log.d("Broadcast", "Broadcasting message in start service");
+		//super.onStartCommand(intent, flags, startId);
+		return START_STICKY;
+	}
 
 	@Override
 	public void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-
 		createBroadcastMessage("DismissProgressBar");
 		Log.d("Broadcast",
 				"Broadcasting DismissProgressBar message in destroy service");
-
 	}
 
-	// ------------------------------------------------------------------
-	// -------------------------------Binder-------------------------
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	// *************************************************************************
-	// *************************************************************************
+	// ************************************************************
+	// ************************************************************
+	// ************************************************************
+	// ************************************************************
 
 	public void stopServiceManually() {
 		// Disconnecting from Server
@@ -273,7 +234,7 @@ public class XMPPService extends IntentService {
 		}
 		// Cancel periodic job
 		// sendForAnHourCancel();
-
+		closeDB();
 	}
 
 	private void getSharedPreference() {
@@ -876,11 +837,7 @@ public class XMPPService extends IntentService {
 
 						LatVir = Double.parseDouble(secondChild);
 						LonVir = Double.parseDouble(thirdChild);
-						
-						xx.insertToDB(secondChild, thirdChild);
-						
-//						myDb = new DBAdapter(get);
-//						myDb.open();
+
 						if (myDb != null)
 							myDb.insertRow("Traffic", secondChild, thirdChild);
 						else
