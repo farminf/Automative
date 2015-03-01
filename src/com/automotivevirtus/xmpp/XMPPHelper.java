@@ -83,14 +83,8 @@ public class XMPPHelper extends Activity {
 		xmppService.sendAdHocCommands(username, command);
 	}
 	
-	public void insertToDB(String lat, String lon){
-			
-		myDb.insertRow("Traffic", lat, lon);
-	}
-	public void opendb(){
-		myDb = new DBAdapter(XMPPHelper.this);
-		myDb.open();
-	}
+	
+	
 	
 	
 }

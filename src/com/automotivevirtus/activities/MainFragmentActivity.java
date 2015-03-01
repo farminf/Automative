@@ -148,10 +148,6 @@ public class MainFragmentActivity extends FragmentActivity implements
 		// Creating Alert for unavailability of XMPP Server
 		noXMPPDialog();
 		
-		openDB();
-		if (myDb != null){
-			Log.d("in main", "myDb is not null");
-		}
 
 		// Check for Network State
 		final ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -517,7 +513,6 @@ public class MainFragmentActivity extends FragmentActivity implements
 				XMPPHelper.stopXMPPService();
 				sendForAnHourCancel();
 			}
-			closeDB();
 			finish();
 			System.exit(0);
 			return true;

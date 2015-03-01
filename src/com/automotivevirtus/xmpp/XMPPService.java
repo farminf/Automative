@@ -154,7 +154,7 @@ public class XMPPService extends IntentService {
 	public String incomingMSGFrom;
 	// public String[] incomingMSG;
 
-	Context context;
+	private static Context context;
 
 	LocationService currentLocation;
 	double currentLatitude;
@@ -167,8 +167,7 @@ public class XMPPService extends IntentService {
 	double LatVir;
 	double LonVir;
 
-	DBAdapter myDb;
-	XMPPHelper xx = new XMPPHelper();
+	private static DBAdapter myDb;
 
 	// ************************************************************
 	// ************************************************************
@@ -197,8 +196,6 @@ public class XMPPService extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		// TODO Auto-generated method stub
-		XMPPHelper xx = new XMPPHelper();
-		xx.opendb();
 
 		asmk = SmackAndroid.init(XMPPService.this);
 		domain = getString(R.string.domain_name);
@@ -439,6 +436,7 @@ public class XMPPService extends IntentService {
 			@Override
 			protected Boolean doInBackground(Void... arg0) {
 
+				openDB();
 				// isConnectedXMPP = false;
 				ConnectionConfiguration config = new ConnectionConfiguration(
 						serveraddress, serverport, domain);
@@ -876,14 +874,14 @@ public class XMPPService extends IntentService {
 
 						LatVir = Double.parseDouble(secondChild);
 						LonVir = Double.parseDouble(thirdChild);
-						
-						xx.insertToDB(secondChild, thirdChild);
-						
-//						myDb = new DBAdapter(get);
-//						myDb.open();
-						if (myDb != null)
+
+						// myDb = new DBAdapter(get);
+						// myDb.open();
+
+						if (myDb != null) {
 							myDb.insertRow("Traffic", secondChild, thirdChild);
-						else
+							Log.d("db", "new row inserted");
+						} else
 							Log.d("db", "myDb is empty");
 					}
 

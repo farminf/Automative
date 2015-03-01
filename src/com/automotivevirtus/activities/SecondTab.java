@@ -61,8 +61,8 @@ public class SecondTab extends Fragment {
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.second_tab, container, false);
 
-		accidentLatitudeDouble = 45.061590;
-		accidentLongitudeDouble = 7.657642;
+		accidentLatitudeDouble = 45.061010;
+		accidentLongitudeDouble = 7.658942;
 		
 		trafficLatitudeDouble = 45.061990;
 		trafficLongitudeDouble = 7.651042;
@@ -77,7 +77,9 @@ public class SecondTab extends Fragment {
 		myDb = new DBAdapter(getActivity());
         myDb.open();
 		if (myDb.checkDBEmpty() != 0){
-		Cursor cursor = myDb.getRow(1);
+		String rowno = Integer.toString(myDb.checkDBEmpty());
+		Log.d("DB row", rowno );
+		Cursor cursor = myDb.getRow(10);
 		trafficLatV = cursor.getDouble(DBAdapter.COL_LAT);
 		trafficLonV = cursor.getDouble(DBAdapter.COL_LON);
 		Traffic2 = new LatLng(trafficLatV, trafficLonV);
