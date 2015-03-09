@@ -27,7 +27,10 @@
         <activity
             android:name="com.automotivevirtus.activities.MainFragmentActivity"
             android:label="@string/app_name" >
-
+            <meta-data
+                android:name="android.support.UI_OPTIONS"
+                android:value="splitActionBarWhenNarrow" >
+            </meta-data>
             <!-- android:configChanges="keyboardHidden|orientation|screenSize" -->
 
             <intent-filter>
@@ -47,8 +50,6 @@
         </activity>
 
         <service android:name="com.automotivevirtus.xmpp.XMPPService" />
-        <service android:name="com.automotivevirtus.xmpp.ServiceXMPP" />
-        <service android:name="com.automotivevirtus.xmpp.service" />
         <service android:name="com.automotivevirtus.location.UpdateLocationService" />
 
         <meta-data

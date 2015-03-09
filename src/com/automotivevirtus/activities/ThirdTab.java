@@ -31,6 +31,8 @@ public class ThirdTab extends Fragment {
 	String accidentPubSub;
 	String trafficPubSub;
 	String weatherPubSub;
+	
+	SharedPreferences.Editor SharedPrefEditor;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -76,6 +78,9 @@ public class ThirdTab extends Fragment {
 							Log.d("error", "cannot subscribe to node"
 									+ virtusServices[position]);
 						}
+						SharedPrefEditor = sharedPref.edit();
+						SharedPrefEditor.putBoolean("accidentMarker", true);
+						SharedPrefEditor.commit();
 						break;
 
 					case "Traffic":
@@ -88,6 +93,9 @@ public class ThirdTab extends Fragment {
 							Log.d("error", "cannot subscribe to node"
 									+ virtusServices[position]);
 						}
+						SharedPrefEditor = sharedPref.edit();
+						SharedPrefEditor.putBoolean("trafficMarker", true);
+						SharedPrefEditor.commit();
 						break;
 
 					case "Weather":
@@ -100,6 +108,9 @@ public class ThirdTab extends Fragment {
 							Log.d("error", "cannot subscribe to node"
 									+ virtusServices[position]);
 						}
+						SharedPrefEditor = sharedPref.edit();
+						SharedPrefEditor.putBoolean("weatherMarker", true);
+						SharedPrefEditor.commit();
 						break;
 
 					default:
@@ -119,6 +130,10 @@ public class ThirdTab extends Fragment {
 							Log.d("error", "cannot unsubscribe to node"
 									+ virtusServices[position]);
 						}
+						SharedPrefEditor = sharedPref.edit();
+						SharedPrefEditor.putBoolean("accidentMarker", false);
+						SharedPrefEditor.commit();
+						
 						break;
 
 					case "Traffic":
@@ -131,6 +146,9 @@ public class ThirdTab extends Fragment {
 							Log.d("error", "cannot unsubscribe to node"
 									+ virtusServices[position]);
 						}
+						SharedPrefEditor = sharedPref.edit();
+						SharedPrefEditor.putBoolean("trafficMarker", false);
+						SharedPrefEditor.commit();
 						break;
 
 					case "Weather":
@@ -143,6 +161,10 @@ public class ThirdTab extends Fragment {
 							Log.d("error", "cannot unsubscribe to node"
 									+ virtusServices[position]);
 						}
+						SharedPrefEditor = sharedPref.edit();
+						SharedPrefEditor.putBoolean("weatherMarker", false);
+						SharedPrefEditor.commit();
+						
 						break;
 					default:
 						break;

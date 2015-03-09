@@ -3,9 +3,16 @@ package com.automotivevirtus.activities;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.view.ViewGroup;
 
 public class FragmentPageAdapter extends FragmentStatePagerAdapter {
 
+
+	@Override
+	public Object instantiateItem(ViewGroup arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return super.instantiateItem(arg0, arg1);
+	}
 
 	public FragmentPageAdapter(FragmentManager fm) {
 		super(fm);

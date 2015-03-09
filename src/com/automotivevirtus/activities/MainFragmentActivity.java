@@ -41,7 +41,6 @@ import com.automotivevirtus.settings.About;
 import com.automotivevirtus.settings.Connection_Setting;
 import com.automotivevirtus.xmpp.XMPPHelper;
 import com.automotivevirtus.xmpp.XMPPService;
-import com.automotivevirtus.xmpp.service;
 
 @SuppressWarnings("deprecation")
 public class MainFragmentActivity extends FragmentActivity implements
