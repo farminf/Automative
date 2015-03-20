@@ -19,7 +19,8 @@ SharedPreferences in setting for server Authentication information and pubsub in
 Android Service for XMPP Connection,
 Notification bar icon for service,
 Schedule executive job (periodically or on specific time),
-Android Service for sending location lat and long periodically,--
+Android Service for sending location lat and long periodically,
+SQlite for saving data which receives from VIRTUS
 
 
 Swipe Action Bar,
