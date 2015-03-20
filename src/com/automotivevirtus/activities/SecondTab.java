@@ -102,7 +102,7 @@ public class SecondTab extends Fragment {
 		if (myDb.checkDBEmpty() != 0) {
 			String rowno = Integer.toString(myDb.checkDBEmpty());
 			Log.d("DB row", rowno);
-			Cursor cursor = myDb.getRow(10);
+			Cursor cursor = myDb.getRow(1);
 			trafficLatV = cursor.getDouble(DBAdapter.COL_LAT);
 			trafficLonV = cursor.getDouble(DBAdapter.COL_LON);
 			Traffic2 = new LatLng(trafficLatV, trafficLonV);
