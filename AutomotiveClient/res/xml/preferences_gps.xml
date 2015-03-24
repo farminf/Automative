@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+  
+ 		<!-- GPS Settings -->
+ 		<PreferenceCategory android:title="@string/gps_title">
+			<CheckBoxPreference android:key="@string/gps_use_gps_key"  
+								android:title="@string/gps_use_gps_title"
+								android:summaryOn="@string/gps_use_gps_summary_on"
+								android:summaryOff="@string/gps_use_gps_summary_off"
+								android:defaultValue="true" />
+ 		 		
+ 			<EditTextPreference android:key="@string/gps_min_time_key" 
+ 								android:title="@string/gps_min_time_title"
+								android:summary="@string/gps_min_time_summary" 
+								android:defaultValue="@string/gps_min_time_default_value"
+								android:numeric="integer"
+								android:dependency="@string/gps_use_gps_key"/>
+
+			<EditTextPreference android:key="@string/gps_min_distance_key" 
+ 								android:title="@string/gps_min_distance_title"
+								android:summary="@string/gps_min_distance_summary" 
+								android:defaultValue="@string/gps_min_distance_default_value"
+								android:numeric="integer"
+								android:dependency="@string/gps_use_gps_key"/>
+								
+			<CheckBoxPreference android:key="@string/gps_display_coordinates_key"  
+								android:title="@string/gps_display_coordinates_title"
+								android:summaryOn="@string/gps_display_coordinates_summary_on"
+								android:summaryOff="@string/gps_display_coordinates_summary_off"
+								android:defaultValue="true"
+								android:dependency="@string/gps_use_gps_key" />												
+	</PreferenceCategory>
+  
+</PreferenceScreen>

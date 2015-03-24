@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Application -->
+    <string name="app_title">Automotive Client</string>
+    <string name="app_name">Automotive Client</string>
+    
+    <!-- Info/Warning/Error -->
+    <string name="connection_closed">Connection closed.</string>
+    <string name="connection_starting">Connection starting&#8230;</string>
+    <string name="connection_completed">Connection completed successfully.</string>
+    <string name="connection_not_found">Connection not found.</string>
+    <string name="user_connected">You are connected.</string>
+    <string name="user_not_connected">You are not connected.</string>
+    <string name="error_adding_entry_in_roster">Error adding entry in roster.</string>
+    <string name="error_getting_pubsub_node">Error getting pubsub node</string>
+    <string name="error_subscribing_node">Error subscribing node.</string>
+    <string name="published_on_topic">Published on topic:</string>
+    
+    <string name="received_presence">Received presence:</string>
+    <string name="received_presence_bare_jid">Received presence (bareJID):</string>
+    <string name="received">Received:</string>
+    
+    <string name="messages_to_near">Messages will be sent only to near vehicles.</string>
+    <string name="messages_to_all">Messages will be sent to all vehicles.</string>
+    <string name="error_delivering_message">Error delivering message. Error:</string>
+    <string name="sent_successfully">sent successfully.</string>
+    
+    <string name="message_traffic">Traffic message sent successfully.</string>
+    <string name="message_weather">Weather message sent successfully.</string>
+    <string name="message_car_accident">Car Accident message sent successfully.</string>
+    
+    <string name="gps_is_disabled_question">Your GPS is disabled. Would you like to enable it?</string>
+    <string name="gps_enable">Enable GPS</string>
+    <string name="gps_do_nothing">Do nothing</string>
+    <string name="gps_enabled">GPS enabled.</string>
+    <string name="gps_disabled">GPS disabled.</string>
+    
+    <string name="network_not_available">No network available.</string>
+	
+	<string name="location_not_available">No location available.</string>    
+    
+    <string name="server_parameters_missing">Server parameters missing.</string>
+    
+    <string name="use_default_values">Using default values.</string>
+    
+     <!-- Subscription Type -->
+    <string name="subscription_accept_all">ACCEPT_ALL</string>
+    <string name="subscription_reject_all">REJECT_ALL</string>
+    <string name="subscription_manual">MANUAL</string>
+    
+     <!-- User manager xmpp description -->
+    <string name="user_manager_description">Smart Manager</string>
+    
+     <!-- Notifications -->
+    <string name="notifications">Notifications</string>
+    <string name="clear_notifications">Clear Notifications</string>
+    
+	<!-- Log -->
+    <string name="log">Log</string>
+    <string name="clear_log">Clear Log</string>
+    
+  	<!-- Button Send ok + Send Cancel -->
+    <string name="btn_send_ok">Send</string>
+    <string name="btn_send_cancel">Cancel</string>
+    <string name="txt_to_send">Text to send</string>
+    
+    <!-- Option menu -->
+    <string name="menu_topic">Topic</string>
+    <string name="menu_connection">Connection</string>
+    <string name="menu_gps">GPS</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_about">About</string>
+    
+    <!-- Dialog -->
+    <string name="text_executing">Executing</string>
+    
+    <!-- Topic -->
+    <string name="topic_title">Topic Settings</string>
+    
+    <string name="topic_air_key">checkAir</string>
+    <string name="topic_air_title">Subscribe Air Pollution</string>
+    <string name="topic_air_summary_on">Application will receive updates</string>
+    <string name="topic_air_summary_off">Application won\'t receive updates</string>
+    
+    <string name="topic_alert_key">checkAlert</string>
+    <string name="topic_alert_title">Subscribe Alert</string>
+    <string name="topic_alert_summary_on">Application will receive updates</string>
+    <string name="topic_alert_summary_off">Application won\'t receive updates</string>
+    
+    <string name="topic_news_key">checkNews</string>
+    <string name="topic_news_title">Subscribe News</string>
+    <string name="topic_news_summary_on">Application will receive updates</string>
+    <string name="topic_news_summary_off">Application won\'t receive updates</string>
+    
+    <string name="topic_parking_key">checkParking</string>
+    <string name="topic_parking_title">Subscribe Parking</string>
+    <string name="topic_parking_summary_on">Application will receive updates</string>
+    <string name="topic_parking_summary_off">Application won\'t receive updates</string>
+    
+    <string name="topic_road_key">checkRoad</string>
+    <string name="topic_road_title">Subscribe Road Quality</string>
+    <string name="topic_road_summary_on">Application will receive updates</string>
+    <string name="topic_road_summary_off">Application won\'t receive updates</string>
+    
+    <string name="topic_traffic_key">checkTraffic</string>
+    <string name="topic_traffic_title">Subscribe Traffic</string>
+    <string name="topic_traffic_summary_on">Application will receive updates</string>
+    <string name="topic_traffic_summary_off">Application won\'t receive updates</string>
+    
+    <string name="topic_weather_key">checkWeather</string>
+    <string name="topic_weather_title">Subscribe Weather</string>
+    <string name="topic_weather_summary_on">Application will receive updates</string>
+    <string name="topic_weather_summary_off">Application won\'t receive updates</string>
+    
+    <!-- Server -->
+    <string name="server_title">Server Settings</string>
+    
+    <string name="server_address_key">textServerAddress</string>
+    <string name="server_address_title">Address</string>
+    <string name="server_address_summary">Insert server address</string>
+    <!-- <string name="server_address_default_value">130.192.85.33</string> -->
+    <string name="server_address_default_value">192.168.2.1</string>
+    <string name="server_address_message">Check server address</string>
+    
+    <string name="server_port_key">textServerPort</string>
+    <string name="server_port_title">Port</string>
+    <string name="server_port_summary">Insert server port</string>
+    <string name="server_port_default_value">5222</string>
+    <string name="server_port_message">Check server port</string>
+    
+    <string name="server_name_key">textServerName</string>
+    <string name="server_name_title">Name</string>
+    <string name="server_name_summary">Insert server name</string>
+    <string name="server_name_default_value">ripley</string>
+    <string name="server_name_message">Check server name</string>
+    
+    <string name="server_pubsub_key">textServerPubSubService</string>
+    <string name="server_pubsub_title">PubSub</string>
+    <string name="server_pubsub_summary">Insert pubsub service</string>
+    <string name="server_pubsub_default_value">pubsub.ripley</string>
+    <string name="server_pubsub_message">Check pubsub service</string>
+    
+    <string name="server_resource_key">textServerResource</string>
+    <string name="server_resource_title">Resource</string>
+    <string name="server_resource_summary">Insert resource</string>
+    <string name="server_resource_default_value">IOTS</string>
+    <string name="server_resource_message">Check resource</string>
+    
+    <string name="server_account_key">textServerAccount</string>
+    <string name="server_account_title">Account</string>
+    <string name="server_account_summary">Insert server account</string>
+    <string name="server_account_default_value">manager_dispositivi_thomas</string>
+    <string name="server_account_message">Check server account</string>
+    
+    <!-- Client -->
+    <string name="client_title">Client Settings</string>
+    
+    <string name="client_login_key">textClientLogin</string>
+    <string name="client_login_title">Login</string>
+    <string name="client_login_summary">Insert client account</string>
+    <!-- <string name="client_login_default_value">bolognesi</string> -->
+    <string name="client_login_default_value">android3</string>
+    <string name="client_login_message">Check client account</string>
+    
+    <string name="client_password_key">textClientPassword</string>
+    <string name="client_password_title">Password</string>
+    <string name="client_password_summary">Insert client password</string>
+    <!-- <string name="client_password_default_value">coccolino69</string> -->
+    <string name="client_password_default_value">android</string>
+    <string name="client_password_message">Check client password</string>
+    
+    <string name="client_subscription_type_key">listSubscriptionType</string>
+    <string name="client_subscription_type_title">Type</string>
+    <string name="client_subscription_type_summary">Select subscription type</string>
+    
+    <string name="client_description_key">textClientDescription</string>
+    <string name="client_description_title">Description</string>
+    <string name="client_description_summary">Insert client description</string>
+    <string name="client_description_default_value">Client</string>
+    <string name="client_description_message">Check client description</string>
+    
+     <!-- GPS -->
+    <string name="gps_title">GPS Settings</string>
+    
+    <string name="gps_use_gps_key">checkUseGps</string>
+    <string name="gps_use_gps_title">Use GPS</string>
+    <string name="gps_use_gps_summary_on">Application will use GPS</string>
+    <string name="gps_use_gps_summary_off">Application won\'t use GPS</string>
+    
+    <string name="gps_min_time_key">textGpsMinTime</string>
+    <string name="gps_min_time_title">Minimum time</string>
+    <string name="gps_min_time_summary">Insert minimum time interval for notifications (in milliseconds)</string>
+    <string name="gps_min_time_default_value">10000</string>
+    <string name="gps_min_time_message">Check GPS minimum time</string>
+    
+    <string name="gps_min_distance_key">textGpsMinDistance</string>
+    <string name="gps_min_distance_title">Minimum distance</string>
+    <string name="gps_min_distance_summary">Insert minimum distance interval for notifications (in meters)</string>
+    <string name="gps_min_distance_default_value">20</string>
+    <string name="gps_min_distance_message">Check GPS minimum distance</string>
+    
+	<string name="gps_display_coordinates_key">checkDisplayCoordinates</string>
+    <string name="gps_display_coordinates_title">Display coordinates</string>
+    <string name="gps_display_coordinates_summary_on">Application will display current coordinates</string>
+    <string name="gps_display_coordinates_summary_off">Application won\'t display current coordinates</string>   
+    
+     <!-- Presences  -->
+    <string name="presences_title">Presences Settings</string>
+    
+    <string name="presences_send_presences_key">checkSendPresences</string>
+    <string name="presences_send_presences_title">Send presences</string>
+    <string name="presences_send_presences_summary_on">Application will send presences</string>
+    <string name="presences_send_presences_summary_off">Application won\'t send presences</string>
+    
+    <string name="presences_frequency_key">textPresencesFrequency</string>
+    <string name="presences_frequency_title">Sending frequency</string>
+    <string name="presences_frequency_summary">Sending frequency (in milliseconds)</string>
+    <string name="presences_frequency_default_value">10000</string>
+    <string name="presences_frequency_message">Check Sending frequency</string>
+    
+    <string name="presences_initial_delay_key">textInitialDelay</string>
+    <string name="presences_initial_delay_title">Initial delay</string>
+    <string name="presences_initial_delay_summary">Initial delay after which system will start sending presences (in milliseconds)</string>
+    <string name="presences_initial_delay_default_value">20</string>
+    <string name="presences_initial_delay_message">Check initial delay</string> 
+    
+     <!-- Messages to near checkbox -->
+    <string name="messages_title">Messages Configuration</string>
+    
+    <string name="messages_to_near_key">checkDestination</string>
+    <string name="messages_to_near_title">Send messages</string>
+    <string name="messages_to_near_summary_on">Messages will be sent to all vehicles</string>
+    <string name="messages_to_near_summary_off">Messages will be sent only to near vehicles</string>
+    
+     <!--Verbosity -->
+    <string name="verbosity_category_title">Verbosity Settings</string>
+    
+    <string name="verbosity_marker_key">checkMarkerVerbosity</string>
+    <string name="verbosity_marker_title">Display marker</string>
+    <string name="verbosity_marker_summary_on">Application will display marker over map</string>
+    <string name="verbosity_marker_summary_off">Application will not display marker over map</string>
+    
+    <string name="verbosity_key">checkVerbosity</string>
+    <string name="verbosity_title">Use verbosity</string>
+    <string name="verbosity_summary_on">Application will be more verbose</string>
+    <string name="verbosity_summary_off">Application will be less verbose</string>
+    
+    <string name="verbosity_alert_key">checkAlertVerbosity</string>
+    <string name="verbosity_alert_title">Use alert</string>
+    <string name="verbosity_alert_summary_on">Application will use receiving alert</string>
+    <string name="verbosity_alert_summary_off">Application will not use receiving alert</string>
+    
+    <string name="results_number_key">textResultsNumber</string>
+    <string name="results_number_title">Amount of results</string>
+    <string name="results_number_summary">Insert number of results to retrieve from Server</string>
+    <string name="results_number_default_value">5</string>
+    <string name="results_number_message">Check amount of results</string>
+    
+    <string name="fake_coordinates_key">checkFakeCoordinates</string>
+    <string name="fake_coordinates_title">Use fake coordinates</string>
+    <string name="fake_coordinates_summary_on">Application will use fake coordinates if GPS signal not available</string>
+    <string name="fake_coordinates_summary_off">Application will not use fake coordinates</string>
+    
+    <!--TAB -->
+    <string name="tab_messages">Messages</string>
+    <string name="tab_map">Map</string>
+    <string name="tab_log">Log</string>
+    
+    <!--Button Text -->
+    <string name="btn_traffic">Traffic</string>
+    <string name="btn_weather">Weather</string>
+    <string name="btn_accident">Accident</string>
+    <string name="btn_message">Message</string>
+    
+    <!--Map -->
+    <string name="map_satellite">Satellite</string>
+    <string name="map_traffic">Traffic</string>
+    <string name="map_center">Center</string>
+    <string name="map_clear_overlays">Clear overlays</string>
+    <string name="map_current_position">Current position</string>
+    
+    <!--Dialog -->
+    <string name="dialog_title">Message</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_no_result_fuel">Petrol stations not found</string>
+    <string name="dialog_ok_result_fuel">Petrol stations found. They will be shown on map area.</string>
+    <string name="dialog_title_petrol_station">Petrol station</string>
+    
+     <!--Defaul Messagges -->
+    <string name="default_message_traffic">Heavy traffic</string>
+    <string name="default_message_weather">Bad weather conditions</string>
+    <string name="default_message_accident">Car accident</string>
+    
+    <!--Reply Messagges -->
+    <string name="reply_message_fuel">Low fuel warning</string>
+    
+    <!-- About text -->
+    <string name="about">Istituto Superiore Mario Boella (ISMB) is a research and innovation center operating in the Information 
+        				 and Communication Technologies (ICT) domain. Founded in 2000 by Compagnia di San Paolo and Politecnico 
+        				 di Torino, today ISMB relies on the technological and process competences of around 150 researchers working 
+        				 in close cooperation with companies, academia and Public Administration.
+	</string>
+	<string name="logo">ISMB Logo</string>
+	
+	<string name="server_status">Server Status</string>
+    
+</resources>

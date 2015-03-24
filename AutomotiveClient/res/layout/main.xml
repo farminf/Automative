@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    		  android:orientation="vertical"
+			  android:layout_width="fill_parent"
+			  android:layout_height="fill_parent">
+	<TabHost android:id="@+id/tabhost"
+		  	 android:layout_width="fill_parent"
+		  	 android:layout_height="fill_parent">
+		<LinearLayout android:orientation="vertical"
+					  android:layout_width="fill_parent"
+					  android:layout_height="fill_parent"
+					  android:padding="5dp">
+			<TabWidget android:id="@android:id/tabs"
+					   android:layout_margin="5dp"
+					   android:layout_width="fill_parent"
+					   android:layout_height="wrap_content">
+			</TabWidget>
+			<FrameLayout android:id="@android:id/tabcontent"
+						 android:layout_width="fill_parent"
+						 android:layout_height="fill_parent"
+						 android:padding="5dp">
+				<!-- First TAB MESSAGES -->
+				<LinearLayout android:id="@+id/tabMessages"
+    		  				  android:layout_width="fill_parent"
+			  				  android:layout_height="fill_parent"
+			  				  android:orientation="vertical"
+			  				  android:gravity="center">
+					<!-- Layout for buttons -->
+					<LinearLayout android:layout_height="wrap_content" 
+					    		  android:layout_width="fill_parent"
+					    		  android:orientation="vertical"
+					    		  android:background="#516076"
+					    		  android:paddingTop="5dp">
+						<LinearLayout android:weightSum="100" 
+						    		  android:orientation="horizontal" 
+						    		  android:layout_width="fill_parent" 
+						    		  android:layout_height="fill_parent">
+							<Button android:id="@+id/buttonTraffic" 
+    								android:layout_height="wrap_content"
+     								android:layout_width="fill_parent"
+     								android:layout_weight="50"
+     								android:drawableTop="@drawable/traffic"
+    								android:text="@string/btn_traffic"/>
+							<Button android:id="@+id/buttonWeather" 
+								    android:layout_height="wrap_content"
+								    android:layout_width="fill_parent"
+								    android:layout_weight="50"
+								    android:drawableTop="@drawable/weather"
+								    android:text="@string/btn_weather"/>					  
+						</LinearLayout>
+						<LinearLayout android:layout_weight="1"
+						    		  android:orientation="horizontal"
+						    		  android:layout_width="fill_parent"
+						    		  android:layout_height="0dp">
+    			  			<Button android:id="@+id/buttonCrash" 
+								    android:layout_height="wrap_content"
+								    android:layout_width="fill_parent"
+								    android:drawableTop="@drawable/crash"
+								  	android:layout_weight="1"
+								    android:text="@string/btn_accident"/>						
+							<Button android:id="@+id/buttonMessage" 
+				    				android:layout_height="wrap_content"
+				     				android:layout_width="fill_parent"
+				     				android:drawableTop="@drawable/message"
+				     				android:layout_weight="1"
+				    				android:text="@string/btn_message"/>
+						</LinearLayout>
+				</LinearLayout>
+			
+				<RelativeLayout android:layout_width="fill_parent"
+					    		android:layout_height="wrap_content"
+					    		android:layout_gravity="center_vertical"
+					    		android:gravity="center_vertical"
+					    		android:orientation="horizontal">
+					
+								<TextView android:layout_width="wrap_content"
+								    	  android:layout_height="wrap_content"
+								    	  android:layout_gravity="center"
+								    	  android:text="@string/notifications"
+								     	  android:layout_alignParentLeft="true"
+								     	  android:layout_centerVertical="true"   
+								    	  android:textStyle="bold" >
+								</TextView>
+								
+								<ImageView android:id="@+id/serverStatus"
+								      	   android:layout_width="wrap_content"
+									       android:layout_height="wrap_content"
+									       android:layout_gravity="center_vertical"
+									       android:layout_marginBottom="0dp"
+									       android:layout_marginLeft="0dp"
+									       android:layout_marginRight="0dp"
+									       android:layout_marginTop="0dp"
+								      	   android:contentDescription="@string/server_status"
+									       android:padding="2dp"
+									       android:scaleType="centerInside"
+									       android:layout_alignParentRight="true"
+									       android:src="@drawable/red"/>
+				</RelativeLayout>
+				
+				<LinearLayout  
+						  android:layout_width="fill_parent"
+	    				  android:layout_height="fill_parent"
+						  android:orientation="vertical"
+	    				  android:weightSum="100"
+						  android:gravity="center">
+		    		 <ScrollView android:fillViewport="true"
+		    		     		 android:layout_weight="90"
+		    		      		 android:background="#516076"
+					     		 android:layout_marginBottom="0dip"
+					     		 android:id="@+id/scroller_notifications"
+					     		 android:layout_height="fill_parent"
+					     		 android:layout_width="fill_parent"
+					     		 android:fadingEdge="none">
+						 <TextView android:padding="5dp"  
+						    	   android:id="@+id/textNotifies"
+						    	   android:layout_width="fill_parent" 
+						    	   android:layout_height="wrap_content" >
+						 </TextView>
+ 					</ScrollView>
+ 					<Button	android:id="@+idButton/clear_notifications"
+							android:text="@string/clear_notifications"
+							android:layout_marginTop="5dp"
+						 	android:layout_weight="10"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:drawableLeft="@drawable/delete"
+							android:gravity="center"/>
+				</LinearLayout>
+				 
+	</LinearLayout>
+
+	<!-- Second TAB -->
+	<LinearLayout android:id="@+id/tabMap"
+				  android:orientation="vertical"
+				  android:layout_width="fill_parent"
+				  android:layout_height="fill_parent"> 
+		<TableLayout android:stretchColumns="*"
+					 android:layout_width="fill_parent"
+					 android:layout_height="wrap_content"
+					 android:gravity="center"
+					 android:background="#516076">
+			<TableRow>
+				<CheckBox android:id="@+idCheckBox/satellite"
+						  android:text="@string/map_satellite"
+						  android:checked="false"/>
+				<CheckBox android:id="@+idCheckBox/traffic"
+						  android:text="@string/map_traffic"
+						  android:checked="false"/>
+			</TableRow>
+			
+			<TableRow>
+				<Button	android:id="@+idButton/clear_overlays"
+						android:text="@string/map_clear_overlays"
+						android:layout_width="0px"
+						android:layout_height="wrap_content"
+						android:layout_weight="0.5"
+						android:drawableLeft="@drawable/delete"
+						android:gravity="center"/>
+				<Button	android:id="@+idButton/map_center"
+						android:text="@string/map_center"
+						android:layout_width="0px"
+						android:layout_height="wrap_content"
+						android:layout_weight="0.5"
+						android:drawableLeft="@drawable/center"
+						android:gravity="center"/>
+			</TableRow>
+	</TableLayout>
+			
+	<com.google.android.maps.MapView android:id="@+id/mapview"
+	  								 android:apiKey="0q9eaGwzuhl6yiicmRnHShmrC6FHu2Rykmg0nNw"
+	  								 android:layout_width="fill_parent"
+	  								 android:layout_height="fill_parent"
+	  								 android:clickable="true">
+	</com.google.android.maps.MapView>
+</LinearLayout>
+		      	    		  
+	<!-- Third TAB -->
+	<LinearLayout android:id="@+id/tabLog"
+				  android:orientation="vertical"
+				  android:layout_width="fill_parent"
+				  android:layout_height="fill_parent">  
+		<TextView android:layout_height="wrap_content"
+				    	  android:layout_width="fill_parent" 
+				    	  android:text="@string/notifications"  
+			  			  android:textStyle="bold">
+				</TextView>
+
+				<LinearLayout  
+						  android:layout_width="fill_parent"
+	    				  android:layout_height="fill_parent"
+						  android:orientation="vertical"
+	    				  android:weightSum="100"
+						  android:gravity="center">
+		    		 <ScrollView android:fillViewport="true"
+		    		     		 android:layout_weight="90"
+		    		      		 android:background="#516076"
+					     		 android:layout_marginBottom="0dip"
+					     		 android:id="@+id/scroller_log"
+					     		 android:layout_height="fill_parent"
+					     		 android:layout_width="fill_parent"
+					     		 android:fadingEdge="none">
+						 <TextView android:padding="5dp"  
+						    	   android:id="@+id/textLog"
+						    	   android:layout_width="fill_parent" 
+						    	   android:layout_height="wrap_content" >
+						 </TextView>
+ 					</ScrollView>
+ 					<Button	android:id="@+idButton/clear_log"
+							android:text="@string/clear_log"
+							android:layout_marginTop="5dp"
+						 	android:layout_weight="10"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:drawableLeft="@drawable/delete"
+							android:gravity="center"/>
+				</LinearLayout>
+	</LinearLayout>
+
+   </FrameLayout>
+	</LinearLayout>
+	</TabHost>
+</LinearLayout>
+
+
+

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+  
+ 		<!-- Server section -->
+ 		<PreferenceCategory  android:title="@string/server_title">
+ 		
+ 			<EditTextPreference android:key="@string/server_address_key" 
+ 								android:title="@string/server_address_title"
+								android:summary="@string/server_address_summary" 
+								android:defaultValue="@string/server_address_default_value"/>
+
+			<!-- Only numeric characters -->
+			<EditTextPreference android:key="@string/server_port_key" 
+ 								android:title="@string/server_port_title"
+								android:summary="@string/server_port_summary" 
+								android:defaultValue="@string/server_port_default_value"
+								android:numeric="integer"/>
+
+			<EditTextPreference android:key="@string/server_name_key" 
+ 								android:title="@string/server_name_title"
+								android:summary="@string/server_name_summary" 
+								android:defaultValue="@string/server_name_default_value"/>
+								
+			<EditTextPreference android:key="@string/server_pubsub_key" 
+ 								android:title="@string/server_pubsub_title"
+								android:summary="@string/server_pubsub_summary" 
+								android:defaultValue="@string/server_pubsub_default_value"/>
+								
+			<EditTextPreference android:key="@string/server_resource_key" 
+ 								android:title="@string/server_resource_title"
+								android:summary="@string/server_resource_summary" 
+								android:defaultValue="@string/server_resource_default_value"/>
+								
+			<EditTextPreference android:key="@string/server_account_key" 
+ 								android:title="@string/server_account_title"
+								android:summary="@string/server_account_summary" 
+								android:defaultValue="@string/server_account_default_value"/>
+		</PreferenceCategory>
+		
+		<!-- Client section -->
+ 		<PreferenceCategory  android:title="@string/client_title">
+ 			
+ 			<EditTextPreference android:key="@string/client_login_key" 
+ 								android:title="@string/client_login_title"
+								android:summary="@string/client_login_summary" 
+								android:defaultValue="@string/client_login_default_value"/>
+ 			<!-- Password -->
+			<EditTextPreference android:key="@string/client_password_key" 
+								android:title="@string/client_password_title" 
+								android:summary="@string/client_password_summary" 
+								android:defaultValue="@string/client_password_default_value"
+								android:password="true"/>
+								
+			<ListPreference android:key="@string/client_subscription_type_key" 
+							android:title="@string/client_subscription_type_title"
+							android:summary="@string/client_subscription_type_summary"
+							android:entries="@array/subscriptionEntries" 
+							android:entryValues="@array/subscriptionValues"
+							android:defaultValue="@string/subscription_accept_all"/>								
+								
+			<EditTextPreference android:key="@string/client_description_key" 
+ 								android:title="@string/client_description_title"
+								android:summary="@string/client_description_summary" 
+								android:defaultValue="@string/client_description_default_value"/>
+		</PreferenceCategory>
+  
+</PreferenceScreen>

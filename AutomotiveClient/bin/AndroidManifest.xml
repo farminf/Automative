@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      	  android:versionCode="1"
+      	  android:versionName="1.0" package="it.ismb.automotive">
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="8"/>
+    
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+    
+    <application android:icon="@drawable/icon" android:label="@string/app_name">
+		<!-- Libreries Google Maps -->
+		<uses-library android:name="com.google.android.maps"></uses-library>
+        
+        <!-- Main Activity -->
+		<activity android:name="it.ismb.automotive.AutomotiveClient"
+                  android:label="@string/app_name"
+                  android:theme="@android:style/Theme.NoTitleBar"
+                  android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+		<activity android:name=".PreferencesTopicActivity"
+	              android:label="@string/app_name" 
+      		      android:theme="@android:style/Theme.NoTitleBar">
+    	</activity>
+
+		<activity android:name=".PreferencesConnectionActivity"
+	              android:label="@string/app_name" 
+      		      android:theme="@android:style/Theme.NoTitleBar">
+    	</activity>
+    	
+    	<activity android:name=".PreferencesGpsActivity"
+	              android:label="@string/app_name" 
+      		      android:theme="@android:style/Theme.NoTitleBar">
+    	</activity>
+    	
+    	<activity android:name=".PreferencesSettingsActivity"
+	              android:label="@string/app_name" 
+      		      android:theme="@android:style/Theme.NoTitleBar">
+    	</activity>
+    	
+    	<activity android:name=".AboutActivity"
+	              android:label="@string/app_name" 
+      		      android:theme="@android:style/Theme.NoTitleBar">
+    	</activity>
+    	
+    	<activity android:name=".InsertTextActivity"
+	              android:label="@string/app_name" 
+      		      android:theme="@android:style/Theme.NoTitleBar">
+    	</activity>
+    	
+    	<!-- receiver android:name=".MyPhoneReceiver">
+			<intent-filter>
+				<action android:name="android.net.ConnectivityManager.CONNECTIVITY_ACTION"></action>
+			</intent-filter>
+		</receiver> -->
+		
+		<!-- Broadcast receiver for Reply Intent -->
+		<receiver android:name=".ReplyReceiver">
+			<intent-filter>
+				<action android:name="eu.reply.action.sending"></action>
+			</intent-filter>
+		</receiver>
+		
+    </application>
+</manifest>

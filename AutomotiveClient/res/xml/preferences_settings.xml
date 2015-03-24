@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+  
+ 		<!-- Presences section -->
+ 		<PreferenceCategory  android:title="@string/presences_title">
+			<CheckBoxPreference android:key="@string/presences_send_presences_key"  
+								android:title="@string/presences_send_presences_title"
+								android:summaryOn="@string/presences_send_presences_summary_on"
+								android:summaryOff="@string/presences_send_presences_summary_off"
+								android:defaultValue="true" />
+
+			<EditTextPreference android:key="@string/presences_frequency_key" 
+ 								android:title="@string/presences_frequency_title"
+								android:summary="@string/presences_frequency_summary" 
+								android:defaultValue="@string/presences_frequency_default_value"
+								android:numeric="integer"
+								android:dependency="@string/presences_send_presences_key"/>
+								
+ 			<EditTextPreference android:key="@string/presences_initial_delay_key" 
+ 								android:title="@string/presences_initial_delay_title"
+								android:summary="@string/presences_initial_delay_summary" 
+								android:defaultValue="@string/presences_initial_delay_default_value"
+								android:numeric="integer"
+								android:dependency="@string/presences_send_presences_key"/>								
+		</PreferenceCategory>
+			
+ 		<!-- Messages section -->
+ 		<PreferenceCategory  android:title="@string/messages_title">
+			<CheckBoxPreference android:key="@string/messages_to_near_key"  
+								android:title="@string/messages_to_near_title"
+								android:summaryOn="@string/messages_to_near_summary_on"
+								android:summaryOff="@string/messages_to_near_summary_off"
+								android:defaultValue="true" />				
+		</PreferenceCategory>
+ 		
+		<!-- Verbosity section -->	
+		<PreferenceCategory  android:title="@string/verbosity_category_title">
+		    <CheckBoxPreference android:key="@string/verbosity_marker_key"  
+								android:title="@string/verbosity_marker_title"
+								android:summaryOn="@string/verbosity_marker_summary_on"
+								android:summaryOff="@string/verbosity_marker_summary_off"
+								android:defaultValue="true" />		
+		    
+			<CheckBoxPreference android:key="@string/verbosity_key"  
+								android:title="@string/verbosity_title"
+								android:summaryOn="@string/verbosity_summary_on"
+								android:summaryOff="@string/verbosity_summary_off"
+								android:defaultValue="true" />	
+															
+			<CheckBoxPreference android:key="@string/verbosity_alert_key"  
+								android:title="@string/verbosity_alert_title"
+								android:summaryOn="@string/verbosity_alert_summary_on"
+								android:summaryOff="@string/verbosity_alert_summary_off"
+								android:defaultValue="true" />
+			
+			<EditTextPreference android:key="@string/results_number_key" 
+ 								android:title="@string/results_number_title"
+								android:summary="@string/results_number_summary" 
+								android:defaultValue="@string/results_number_default_value"
+								android:numeric="integer"/>
+			
+			<CheckBoxPreference android:key="@string/fake_coordinates_key"  
+								android:title="@string/fake_coordinates_title"
+								android:summaryOn="@string/fake_coordinates_summary_on"
+								android:summaryOff="@string/fake_coordinates_summary_off"
+								android:defaultValue="true" />
+		</PreferenceCategory>
+			
+</PreferenceScreen>

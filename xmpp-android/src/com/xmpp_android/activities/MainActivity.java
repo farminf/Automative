@@ -7,16 +7,21 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.xmpp_android.R;
 import com.xmpp_android.settings.About;
@@ -25,6 +30,22 @@ import com.xmpp_android.xmpp.XMPP;
 import com.xmpp_android.xmpp.XMPPService;
 
 public class MainActivity extends Activity {
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		// super.onResume();
+		IntentFilter filter = new IntentFilter();
+		filter.addAction("show");
+		registerReceiver(broadcastReceiver, filter);
+		 Log.d("info", "Broadcast registered");
+
+		// mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
+		// IntentFilter filter = new IntentFilter();
+		// //filter.addAction("show");
+		// mLocalBroadcastManager.registerReceiver(broadcastReceiver, filter);
+		
+	}
 
 	SharedPreferences sharedPref;
 	String username;
@@ -49,6 +70,15 @@ public class MainActivity extends Activity {
 	String adhocUsernameToSend;
 	String adhocCommandToSend;
 
+	BroadcastReceiver broadcastReceiver  = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// do something based on the intent's action
+			Log.d("info", "Broadcast received");
+		}
+	};
+	LocalBroadcastManager mLocalBroadcastManager;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -59,6 +89,34 @@ public class MainActivity extends Activity {
 		// Getting User and Server Configuration from Setting shared Preferences
 		getSharedPreference();
 
+		broadcastReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				// do something based on the intent's action
+				Log.d("info", "Broadcast received");
+			}
+		};
+
+		// // BroadCast Receiver
+		// mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
+		// broadcastReceiver = new BroadcastReceiver() {
+		// @Override
+		// public void onReceive(Context context, Intent intent) {
+		//
+		// Log.d("info", "Broadcast received-1");
+		// if (intent.getAction().equals("ShowProgressBar")) {
+		// // do work here
+		// Toast.makeText(getApplicationContext(),
+		// "Activity Received the BroadCast MSG", Toast.LENGTH_LONG)
+		// .show();
+		// Log.d("info", "Broadcast received");
+		//
+		// }
+		// }
+		// };
+		
+		
+		
 		// Button to Start the Service
 		btnStartService = (Button) findViewById(R.id.btnStartService);
 		btnStartService.setOnClickListener(new OnClickListener() {
@@ -81,9 +139,19 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 
-				Intent serviceIntent = new Intent(getBaseContext(),
-						XMPPService.class);
-				stopService(serviceIntent);
+//				Intent serviceIntent = new Intent(getBaseContext(),
+//						XMPPService.class);
+//				stopService(serviceIntent);
+				
+				//BroadCast Manager
+				 mLocalBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+				//Broadcast Sends to Activity
+				Intent broadcastIntent = new Intent();
+				broadcastIntent.setAction("show");
+			   // broadcastIntent.putExtra(whateverExtraData you need to pass back);
+				sendBroadcast(broadcastIntent);
+				Log.d("sender", "Broadcasting message");
+				
 			}
 		});
 
@@ -206,7 +274,8 @@ public class MainActivity extends Activity {
 				adhocUsernameToSend = "receiver1";
 				adhocCommandToSend = "first_custom_command";
 				try {
-					XMPPService.sendAdhocCommand(adhocUsernameToSend , adhocCommandToSend);				
+					XMPPService.sendAdhocCommand(adhocUsernameToSend,
+							adhocCommandToSend);
 				} catch (XMPPException | SmackException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

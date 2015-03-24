@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+  
+ 		<!-- Topic -->
+ 		<PreferenceCategory android:title="@string/topic_title">
+ 
+			<CheckBoxPreference android:key="@string/topic_air_key"  
+								android:title="@string/topic_air_title"
+								android:summaryOn="@string/topic_air_summary_on"
+								android:summaryOff="@string/topic_air_summary_off"
+								android:defaultValue="true" />
+			
+			<CheckBoxPreference android:key="@string/topic_alert_key"  
+								android:title="@string/topic_alert_title"
+								android:summaryOn="@string/topic_alert_summary_on"
+								android:summaryOff="@string/topic_alert_summary_off"
+								android:defaultValue="true" />
+			
+			<CheckBoxPreference android:key="@string/topic_news_key"  
+								android:title="@string/topic_news_title"
+								android:summaryOn="@string/topic_news_summary_on"
+								android:summaryOff="@string/topic_news_summary_off"
+								android:defaultValue="true" />
+			
+			<CheckBoxPreference android:key="@string/topic_parking_key"  
+								android:title="@string/topic_parking_title"
+								android:summaryOn="@string/topic_parking_summary_on"
+								android:summaryOff="@string/topic_parking_summary_off"
+								android:defaultValue="true" />
+			
+			<CheckBoxPreference android:key="@string/topic_road_key"  
+								android:title="@string/topic_road_title"
+								android:summaryOn="@string/topic_road_summary_on"
+								android:summaryOff="@string/topic_road_summary_off"
+								android:defaultValue="true" />
+			
+			<CheckBoxPreference android:key="@string/topic_traffic_key"  
+								android:title="@string/topic_traffic_title"
+								android:summaryOn="@string/topic_traffic_summary_on"
+								android:summaryOff="@string/topic_traffic_summary_off"
+								android:defaultValue="true" />
+			
+			<CheckBoxPreference android:key="@string/topic_weather_key"  
+								android:title="@string/topic_weather_title"
+								android:summaryOn="@string/topic_weather_summary_on"
+								android:summaryOff="@string/topic_weather_summary_off"
+								android:defaultValue="true" />
+		</PreferenceCategory>
+  
+</PreferenceScreen>

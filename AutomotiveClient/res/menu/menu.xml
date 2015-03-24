@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <item android:title="@string/menu_topic" 
+    	  android:id="@+id/topic" 
+    	  android:icon="@drawable/menu_topic"/>
+    
+    <item android:title="@string/menu_connection" 
+    	  android:id="@+id/connection" 
+    	  android:icon="@drawable/menu_connection"/>
+    	  
+	<item android:title="@string/menu_gps" 
+    	  android:id="@+id/gps" 
+    	  android:icon="@drawable/menu_gps"/>    	  
+    	  
+    <item android:title="@string/menu_settings" 
+    	  android:id="@+id/settings" 
+    	  android:icon="@drawable/menu_settings"/>
+    
+    <item android:title="@string/menu_about" 
+    	  android:id="@+id/about" 
+    	  android:icon="@drawable/menu_about"/>
+</menu>

@@ -25,10 +25,27 @@ import android.os.IBinder;
 import android.os.Process;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
 public class XMPPService extends Service {
+
+	@Override
+	@Deprecated
+	public void onStart(Intent intent, int startId) {
+		// TODO Auto-generated method stub
+		//super.onStart(intent, startId);
+		//BroadCast Manager
+		 mLocalBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+		//Broadcast Sends to Activity
+		Intent broadcastIntent = new Intent();
+		broadcastIntent.setAction("show");
+	   // broadcastIntent.putExtra(whateverExtraData you need to pass back);
+		sendBroadcast(broadcastIntent);
+		Log.d("sender", "Broadcasting message2");
+
+	}
 
 	private static SmackAndroid asmk = null;
 
@@ -52,6 +69,8 @@ public class XMPPService extends Service {
 
 
 	static NotificationManager mNotificationManager;
+	
+	LocalBroadcastManager mLocalBroadcastManager;
 
 	// Service Methods
 	// ************************************************************
@@ -62,7 +81,22 @@ public class XMPPService extends Service {
 
 		// Required for using aSmack - also add the DNSjava jar fire in library
 		asmk = SmackAndroid.init(XMPPService.this);
+		
+		
+		//BroadCast Manager
+		 mLocalBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+		//Broadcast Sends to Activity
+		Intent broadcastIntent = new Intent();
+		broadcastIntent.setAction("show");
+	   // broadcastIntent.putExtra(whateverExtraData you need to pass back);
+		sendBroadcast(broadcastIntent);
+		Log.d("sender", "Broadcasting message");
 
+		
+		
+		
+		
+		
 		// run service on seperate thread
 		HandlerThread thread = new HandlerThread("ServiceStartArguments",
 				Process.THREAD_PRIORITY_BACKGROUND);
@@ -91,6 +125,16 @@ public class XMPPService extends Service {
 		// TODO Auto-generated method stub
 		Toast.makeText(this, "OpenFire Service Started", Toast.LENGTH_LONG)
 				.show();
+		//BroadCast Manager
+		 mLocalBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+		//Broadcast Sends to Activity
+		Intent broadcastIntent = new Intent();
+		broadcastIntent.setAction("show");
+	   // broadcastIntent.putExtra(whateverExtraData you need to pass back);
+		sendBroadcast(broadcastIntent);
+		Log.d("sender", "Broadcasting message3");
+		
+		
 		return START_STICKY;
 		// return super.onStartCommand(intent, flags, startId);
 	}

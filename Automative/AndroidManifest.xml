@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.xmpp_android"
+    package="com.automotivevirtus"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -8,9 +8,16 @@
         android:minSdkVersion="14"
         android:targetSdkVersion="21" />
 
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-   
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -18,8 +25,14 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.xmpp_android.activities.MainActivity"
+            android:name="com.automotivevirtus.activities.MainFragmentActivity"
             android:label="@string/app_name" >
+            <meta-data
+                android:name="android.support.UI_OPTIONS"
+                android:value="splitActionBarWhenNarrow" >
+            </meta-data>
+            <!-- android:configChanges="keyboardHidden|orientation|screenSize" -->
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,11 +40,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.xmpp_android.settings.Connection_Setting"
+            android:name="com.automotivevirtus.settings.Connection_Setting"
+            android:label="@string/app_name"
+            android:theme="@style/PreferencesTheme" >
+        </activity>
+        <activity
+            android:name="com.automotivevirtus.settings.About"
             android:label="@string/app_name" >
         </activity>
-        
-        <service android:name="com.xmpp_android.xmpp.XMPPService" />
+
+        <service android:name="com.automotivevirtus.xmpp.XMPPService" />
+        <service android:name="com.automotivevirtus.location.UpdateLocationService" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyBADWi8rc_s9GI2T0n3uWgNeK85P8ClNWM" />
     </application>
 
 </manifest>
